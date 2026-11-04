@@ -114,7 +114,7 @@ def main():
     site.mkdir(exist_ok=True)
     head = ('<!doctype html>\n<html lang="he" dir="rtl">\n<head>\n<meta charset="utf-8">\n'
             '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n'
-            '<meta name="theme-color" content="#FAF6F0">\n')
+            '<meta name="theme-color" content="#FAF6F0">\n<meta name="color-scheme" content="only light">\n')
     title_end = html.index("</title>") + len("</title>")
     page = head + html[:title_end] + "\n" + html[title_end:].split("<div class=\"app\"", 1)[0] \
         + "</head>\n<body>\n<div class=\"app\"" + html[title_end:].split("<div class=\"app\"", 1)[1] + "\n</body>\n</html>\n"
