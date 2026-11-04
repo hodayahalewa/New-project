@@ -1,0 +1,759 @@
+<title>מסע הערכים</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&family=Assistant:wght@400;600;700;800&display=swap">
+<style>
+/* Layout: a phone-width app column (centred on desktop). Screens swap inside it; a bottom tab bar on the hub screens.
+   Palette 6 "חול ופסטל": sand ground, sage / dusty pink / dusty blue accents, espresso ink, brass gold. */
+:root {
+  --sand: #FAF6F0;
+  --sand-2: #F1E9DD;
+  --paper: #FFFDF9;
+  --ink: #403A33;
+  --ink-soft: #7A7067;
+  --line: #E6DCCD;
+  --sage: #BFC8A4;
+  --sage-deep: #768B6F;
+  --rose: #EFC9B8;
+  --rose-deep: #A37772;
+  --sky: #A7B9C9;
+  --sky-deep: #6F8798;
+  --gold: #B8935A;
+  --gold-deep: #8C6B3A;
+  --on-gold: #FFFDF9;
+  --shadow: 0 1px 2px rgba(64,58,51,.08), 0 6px 18px rgba(64,58,51,.08);
+  --font-display: "Frank Ruhl Libre", "David Libre", Georgia, serif;
+  --font-body: "Assistant", "Heebo", "Segoe UI", Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --sand: #1E1A17; --sand-2: #27221E; --paper: #2C2622; --ink: #F1EBE2; --ink-soft: #B9AEA2; --line: #3D352F;
+    --sage: #5E6B4E; --sage-deep: #AFC0A2; --rose: #6E4F49; --rose-deep: #E2B3A6; --sky: #4D5D6B; --sky-deep: #B3C6D6;
+    --gold: #CDAA6E; --gold-deep: #E0C08A; --on-gold: #241F1B; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 18px rgba(0,0,0,.25);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --sand: #1E1A17; --sand-2: #27221E; --paper: #2C2622; --ink: #F1EBE2; --ink-soft: #B9AEA2; --line: #3D352F;
+  --sage: #5E6B4E; --sage-deep: #AFC0A2; --rose: #6E4F49; --rose-deep: #E2B3A6; --sky: #4D5D6B; --sky-deep: #B3C6D6;
+  --gold: #CDAA6E; --gold-deep: #E0C08A; --on-gold: #241F1B; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 18px rgba(0,0,0,.25);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; background: var(--sand-2); }
+body { margin: 0; color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.55; direction: rtl; }
+button { font: inherit; color: inherit; }
+button:focus-visible, textarea:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.app { max-width: 440px; min-height: 100%; margin: 0 auto; background: var(--sand); position: relative; display: flex; flex-direction: column; box-shadow: 0 0 0 1px var(--line); }
+.screen {
+  flex: 1; display: flex; flex-direction: column; gap: 18px;
+  padding-left: max(18px, env(safe-area-inset-left, 0px)); padding-right: max(18px, env(safe-area-inset-right, 0px));
+  padding-block: 16px 24px; animation: in .35s ease both;
+}
+.has-nav .screen { padding-bottom: 96px; }
+@keyframes in { from { opacity: .4; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 500; margin: 0; line-height: 1.2; text-wrap: balance; }
+h1 { font-size: 32px; } h2 { font-size: 24px; } h3 { font-size: 19px; }
+p { margin: 0; }
+.muted { color: var(--ink-soft); }
+.small { font-size: 14px; }
+.eyebrow { font-size: 12px; font-weight: 800; letter-spacing: .08em; color: var(--gold-deep); }
+
+/* buttons */
+.btn { appearance: none; border: 0; cursor: pointer; border-radius: 999px; padding: 14px 22px; font-weight: 800; font-size: 17px; background: var(--ink); color: var(--sand); width: 100%; transition: transform .12s, opacity .2s; }
+.btn:active { transform: scale(.98); }
+.btn[disabled] { opacity: .35; cursor: not-allowed; }
+.btn.gold { background: var(--gold); color: var(--on-gold); }
+.btn.ghost { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--line); }
+.btn.small { padding: 9px 16px; font-size: 15px; width: auto; }
+.link { appearance: none; background: none; border: 0; padding: 6px; cursor: pointer; color: var(--gold-deep); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+
+/* top bar */
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 40px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; background: var(--paper); border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px 4px 10px; font-weight: 800; font-size: 14px; font-variant-numeric: tabular-nums; }
+.coin { width: 16px; height: 16px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #F6E3B4, #C9A56A 55%, #8C6B3A); box-shadow: inset 0 0 0 1.5px rgba(140,107,58,.6); flex: none; }
+.iconbtn { appearance: none; border: 0; background: var(--paper); width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; cursor: pointer; box-shadow: inset 0 0 0 1px var(--line); font-size: 18px; }
+.progress { height: 6px; background: var(--line); border-radius: 99px; overflow: hidden; flex: 1; }
+.progress > i { display: block; height: 100%; background: var(--gold); border-radius: 99px; transition: width .35s; }
+
+/* welcome */
+.welcome { justify-content: center; text-align: center; align-items: center; gap: 20px; }
+.logo-big { width: 190px; height: 190px; }
+.welcome h1 { font-size: 44px; }
+.welcome .lead { max-width: 30ch; color: var(--ink-soft); font-size: 17px; }
+.field { width: 100%; display: grid; gap: 6px; text-align: right; }
+.field label { font-weight: 700; font-size: 14px; }
+.field input, textarea, select { width: 100%; border: 1.5px solid var(--line); background: var(--paper); color: var(--ink); border-radius: 14px; padding: 12px 14px; font: inherit; }
+textarea { min-height: 96px; resize: vertical; }
+
+/* map */
+.map-head { display: grid; gap: 4px; }
+.map { position: relative; padding-block: 6px 10px; }
+.map svg.trail { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.station-row { position: relative; height: 108px; }
+.station { appearance: none; border: 0; background: none; cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 0; text-align: right; position: absolute; top: 50%; transform: translateY(-50%); }
+.station.L { left: calc(22% - 35px); flex-direction: row-reverse; text-align: left; }
+.station.R { right: calc(22% - 35px); }
+.station.lighthouse.L { left: calc(22% - 42px); }
+.station .disc { width: 70px; height: 70px; border-radius: 50%; display: grid; place-items: center; font-size: 30px; background: var(--paper); box-shadow: var(--shadow), inset 0 0 0 2px var(--line); position: relative; flex: none; transition: transform .15s; }
+.station:active .disc { transform: scale(.95); }
+.station .label { display: grid; line-height: 1.25; }
+.station .label b { font-family: var(--font-display); font-weight: 500; font-size: 18px; }
+.station .label span { font-size: 13px; color: var(--ink-soft); }
+.station.next .disc { box-shadow: var(--shadow), inset 0 0 0 3px var(--gold); }
+.station.done .disc { background: var(--sage); }
+.stamp { position: absolute; bottom: -4px; left: -4px; width: 26px; height: 26px; border-radius: 50%; background: var(--gold); color: var(--on-gold); display: grid; place-items: center; font-size: 14px; font-weight: 800; box-shadow: 0 0 0 2px var(--sand); }
+.station .half { position: absolute; bottom: -4px; left: -4px; font-size: 11px; font-weight: 800; background: var(--paper); border-radius: 99px; padding: 1px 6px; box-shadow: inset 0 0 0 1px var(--gold); color: var(--gold-deep); }
+.station.lighthouse .disc { width: 84px; height: 84px; background: none; box-shadow: none; }
+.station.locked { opacity: .6; }
+
+/* domain intro */
+.hero-card { background: var(--paper); border-radius: 22px; padding: 22px; box-shadow: var(--shadow); display: grid; gap: 12px; text-align: center; justify-items: center; }
+.hero-card .big-icon { font-size: 54px; line-height: 1; }
+.steps { display: grid; gap: 10px; width: 100%; }
+.step { display: flex; gap: 12px; align-items: center; background: var(--sand); border-radius: 14px; padding: 12px 14px; text-align: right; }
+.step .n { width: 30px; height: 30px; border-radius: 50%; background: var(--gold); color: var(--on-gold); display: grid; place-items: center; font-weight: 800; flex: none; }
+.step.done .n { background: var(--sage-deep); }
+
+/* questions */
+.q-head { display: grid; gap: 10px; }
+.q-meta { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--ink-soft); font-weight: 700; }
+.q-title { font-family: var(--font-display); font-size: 25px; line-height: 1.3; }
+.golden { display: inline-flex; gap: 6px; align-items: center; color: var(--gold-deep); font-weight: 800; font-size: 13px; }
+.pair { display: grid; gap: 12px; }
+.pair .or { text-align: center; font-family: var(--font-display); font-size: 18px; color: var(--ink-soft); }
+.tile { appearance: none; border: 0; cursor: pointer; border-radius: 20px; padding: 26px 18px; font-size: 21px; font-weight: 700; min-height: 108px; box-shadow: var(--shadow); transition: transform .12s, box-shadow .2s; color: var(--ink); }
+.tile:active { transform: scale(.98); }
+.tile.a { background: var(--sage); }
+.tile.b { background: var(--sky); }
+.timer { height: 4px; background: var(--line); border-radius: 99px; overflow: hidden; }
+.timer i { display: block; height: 100%; width: 100%; background: var(--rose-deep); transform-origin: right; animation: drain 7s linear forwards; }
+@keyframes drain { to { transform: scaleX(0); } }
+.opts { display: grid; gap: 10px; }
+.opt { appearance: none; border: 0; cursor: pointer; text-align: right; background: var(--paper); border-radius: 16px; padding: 15px 16px; font-size: 17px; box-shadow: inset 0 0 0 1.5px var(--line); display: flex; gap: 12px; align-items: center; transition: box-shadow .15s, background .15s; }
+.opt .letter { width: 30px; height: 30px; border-radius: 50%; background: var(--sand-2); display: grid; place-items: center; font-weight: 800; flex: none; font-size: 15px; }
+.opt:active, .opt.picked { box-shadow: inset 0 0 0 2px var(--gold); background: var(--sand-2); }
+.note { background: var(--sand-2); border-radius: 14px; padding: 12px 14px; font-size: 15px; color: var(--ink-soft); }
+.coinpop { position: fixed; left: 50%; top: 38%; transform: translateX(-50%); font-weight: 800; font-size: 22px; color: var(--gold-deep); pointer-events: none; animation: pop .9s ease forwards; z-index: 30; display: flex; gap: 6px; align-items: center; }
+@keyframes pop { 0% { opacity: 0; transform: translate(-50%, 10px) scale(.8); } 25% { opacity: 1; transform: translate(-50%, 0) scale(1.1); } 100% { opacity: 0; transform: translate(-50%, -40px) scale(1); } }
+
+/* value cards */
+.cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.vcard { appearance: none; border: 0; cursor: pointer; aspect-ratio: 3 / 4.2; border-radius: 14px; background: linear-gradient(160deg, #FFFDF8, #EFE5D6); box-shadow: var(--shadow), inset 0 0 0 2px #C9A56A; display: grid; place-items: center; align-content: center; gap: 8px; padding: 8px; position: relative; color: #403A33; transition: transform .15s, box-shadow .15s; }
+.vcard::after { content: ""; position: absolute; inset: 6px; border-radius: 9px; border: 1px solid rgba(184,147,90,.55); pointer-events: none; }
+.vcard .vi { font-size: 30px; line-height: 1; }
+.vcard .vn { font-family: var(--font-display); font-size: 17px; text-align: center; line-height: 1.15; }
+.vcard.sel { transform: translateY(-6px); box-shadow: 0 10px 22px rgba(140,107,58,.28), inset 0 0 0 3px #8C6B3A; }
+.vcard.sel::before { content: "✓"; position: absolute; top: -8px; left: -8px; width: 26px; height: 26px; border-radius: 50%; background: #8C6B3A; color: #FFFDF9; display: grid; place-items: center; font-weight: 800; font-size: 14px; z-index: 2; }
+.vcard .count { position: absolute; top: 8px; right: 8px; font-size: 11px; font-weight: 800; color: #8C6B3A; }
+.counter { text-align: center; font-weight: 800; color: var(--gold-deep); }
+
+/* flip reveal */
+.flips { display: grid; gap: 14px; }
+.flip { perspective: 1000px; }
+.flip-in { position: relative; transition: transform .8s cubic-bezier(.3,.7,.3,1); transform-style: preserve-3d; min-height: 190px; }
+.flip.on .flip-in { transform: rotateY(180deg); }
+.face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 18px; padding: 16px 18px; box-shadow: var(--shadow), inset 0 0 0 2px #C9A56A; background: linear-gradient(160deg, #FFFDF8, #EFE5D6); color: #403A33; }
+.face.front { display: grid; place-items: center; align-content: center; gap: 6px; }
+.face.front .vi { font-size: 40px; }
+.face.front .vn { font-family: var(--font-display); font-size: 26px; }
+.face.back { transform: rotateY(180deg); display: grid; gap: 6px; align-content: start; position: relative; }
+.face.back .row { display: flex; align-items: center; gap: 8px; }
+.face.back .vn { font-family: var(--font-display); font-size: 22px; }
+.face.back .why { font-size: 13px; color: #7A7067; border-top: 1px dashed rgba(184,147,90,.5); padding-top: 6px; }
+.panel { background: var(--paper); border-radius: 18px; padding: 16px; box-shadow: var(--shadow); display: grid; gap: 10px; }
+.tension { display: grid; gap: 2px; padding: 10px 12px; border-radius: 12px; background: var(--sand); }
+.tension b { font-size: 13px; color: var(--gold-deep); }
+
+/* stamp */
+.stamp-big { width: 180px; height: 180px; border-radius: 50%; margin: 10px auto 0; display: grid; place-items: center; text-align: center; border: 4px double var(--gold); color: var(--gold-deep); font-family: var(--font-display); font-size: 22px; line-height: 1.2; transform: rotate(-8deg); animation: stampin .6s cubic-bezier(.2,1.4,.4,1) both; background: var(--paper); padding: 18px; }
+@keyframes stampin { from { transform: rotate(-8deg) scale(1.8); opacity: 0; } to { transform: rotate(-8deg) scale(1); opacity: 1; } }
+
+/* album */
+.fam { display: grid; gap: 8px; }
+.fam h3 { font-size: 17px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.vchip { appearance: none; border: 0; cursor: pointer; border-radius: 999px; padding: 6px 12px; font-size: 14px; font-weight: 700; background: var(--paper); box-shadow: inset 0 0 0 1px var(--line); color: var(--ink-soft); }
+.vchip.found { background: var(--sage); color: var(--ink); box-shadow: inset 0 0 0 1px var(--sage-deep); }
+.vchip.core { background: var(--gold); color: var(--on-gold); box-shadow: none; }
+.vchip.locked { opacity: .55; }
+
+/* sheet */
+.sheet-bg { position: fixed; inset: 0; background: rgba(30,26,23,.45); display: flex; align-items: flex-end; justify-content: center; z-index: 40; animation: fade .2s both; }
+@keyframes fade { from { opacity: 0; } }
+.sheet { background: var(--paper); width: 100%; max-width: 440px; border-radius: 22px 22px 0 0; display: grid; gap: 12px; animation: up .3s ease both;
+  padding-block: 20px calc(22px + env(safe-area-inset-bottom, 0px)); padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+@keyframes up { from { transform: translateY(40px); opacity: .5; } }
+.sheet .kv { display: grid; gap: 2px; }
+.sheet .kv b { font-size: 13px; color: var(--gold-deep); }
+
+/* garden */
+.garden { border-radius: 22px; overflow: hidden; box-shadow: var(--shadow); background: linear-gradient(#F6E6DA, #FAF6F0 55%); }
+.garden svg { display: block; width: 100%; height: auto; }
+.shop { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.item { appearance: none; border: 0; cursor: pointer; background: var(--paper); border-radius: 16px; padding: 12px 8px; display: grid; gap: 4px; justify-items: center; box-shadow: inset 0 0 0 1px var(--line); font-size: 14px; font-weight: 700; }
+.item .ii { font-size: 26px; }
+.item .price { display: inline-flex; gap: 4px; align-items: center; font-size: 13px; color: var(--gold-deep); }
+.item.owned { box-shadow: inset 0 0 0 2px var(--sage-deep); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13px; color: var(--ink-soft); }
+.stages { display: flex; justify-content: space-between; background: var(--paper); border-radius: 14px; padding: 10px 12px; font-size: 13px; text-align: center; box-shadow: inset 0 0 0 1px var(--line); }
+.stages span { display: grid; gap: 2px; opacity: .45; }
+.stages span.on { opacity: 1; font-weight: 800; color: var(--gold-deep); }
+.stages span i { font-style: normal; font-size: 20px; }
+
+/* challenge */
+.challenge { background: var(--paper); border-radius: 22px; padding: 20px; box-shadow: var(--shadow), inset 0 0 0 2px var(--gold); display: grid; gap: 12px; }
+.challenge .task { font-family: var(--font-display); font-size: 23px; line-height: 1.35; }
+.reminder { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.toggle { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: var(--paper); border-radius: 14px; padding: 12px 14px; box-shadow: inset 0 0 0 1px var(--line); }
+.switch { appearance: none; width: 46px; height: 28px; border-radius: 99px; background: var(--line); position: relative; cursor: pointer; border: 0; flex: none; transition: background .2s; }
+.switch::after { content: ""; position: absolute; top: 3px; right: 3px; width: 22px; height: 22px; border-radius: 50%; background: var(--paper); box-shadow: 0 1px 3px rgba(0,0,0,.25); transition: right .2s; }
+.switch[aria-checked="true"] { background: var(--sage-deep); }
+.switch[aria-checked="true"]::after { right: 21px; }
+
+/* summary */
+.core3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.core3 .vcard { cursor: default; }
+.core3 .rank { position: absolute; top: 8px; right: 10px; font-family: var(--font-display); font-size: 16px; color: #8C6B3A; }
+.drow { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.drow:last-child { border-bottom: 0; }
+.drow .vals { font-size: 14px; color: var(--ink-soft); text-align: left; }
+.empty { text-align: center; color: var(--ink-soft); padding: 16px; border: 1.5px dashed var(--line); border-radius: 16px; display: grid; gap: 10px; justify-items: center; }
+
+/* bottom nav */
+.nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 440px; background: var(--paper); border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(5, 1fr); z-index: 20;
+  padding-bottom: env(safe-area-inset-bottom, 0px); padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); }
+.nav button { appearance: none; border: 0; background: none; cursor: pointer; display: grid; justify-items: center; gap: 2px; padding: 9px 2px 10px; font-size: 12px; font-weight: 700; color: var(--ink-soft); }
+.nav button svg { width: 24px; height: 24px; }
+.nav button[aria-current="page"] { color: var(--gold-deep); }
+.toast { position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%); background: var(--ink); color: var(--sand); padding: 10px 18px; border-radius: 999px; font-size: 14px; font-weight: 700; z-index: 50; animation: in .25s both; max-width: 90%; text-align: center; }
+.sketch-tag { font-size: 11px; font-weight: 800; color: var(--rose-deep); background: var(--sand-2); border-radius: 99px; padding: 2px 8px; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+</style>
+
+<div class="app" id="app"></div>
+
+<script>
+const DATA = __DATA__;
+const LEAF = "__LEAF__";
+const SPROUT = "__SPROUT__";
+const PATHIMG = "__PATHIMG__";
+const V = Object.fromEntries(DATA.values.map(v => [v.name, v]));
+const FAMILIES = [...new Set(DATA.values.map(v => v.family))];
+const D = Object.fromEntries(DATA.domains.map(d => [d.id, d]));
+const LETTERS = ["א", "ב", "ג", "ד"];
+const LEVELS = [[0, "מטייל"], [300, "חוקר"], [800, "מגלה"], [1500, "שומר המגדלור"], [2500, "מורה דרך"]];
+const GROW = [["🌰", "זרע"], ["🌱", "נבט"], ["🪴", "שתיל"], ["🌸", "פרח"], ["🌳", "עץ"]];
+const SHOP = [{ id: "bench", icon: "🪑", name: "ספסל", price: 150 }, { id: "butterflies", icon: "🦋", name: "פרפרים", price: 200 }, { id: "lantern", icon: "🏮", name: "פנס", price: 300 }];
+const KEY = "masa-haarachim-proto-v1";
+
+/* ---------- state ---------- */
+const fresh = () => ({ name: "", started: false, coins: 0, domains: {}, core: [], coreDone: false, peek: false, challenges: 0, notes: [], shop: [], asked: {}, reminders: { push: true, day: "ראשון", time: "09:00" } });
+let S = load();
+function load() { try { const s = JSON.parse(localStorage.getItem(KEY) || "null"); if (s && typeof s === "object") return Object.assign(fresh(), s); } catch (e) {} return fresh(); }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+const dom = id => (S.domains[id] ||= { scores: {}, why: {}, tensions: [], chosen: [], reflection: "", done: false, run: null });
+const doneDomains = () => DATA.domains.filter(d => S.domains[d.id]?.done);
+const level = () => { let l = LEVELS[0][1]; for (const [min, n] of LEVELS) if (S.coins >= min) l = n; return l; };
+const found = () => { const set = new Set(S.core); doneDomains().forEach(d => S.domains[d.id].chosen.forEach(v => set.add(v))); return set; };
+const shuffle = a => { const b = [...a]; for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+/* ---------- logo & symbols ---------- */
+let uid = 0;
+function compassLogo(size = 120) {
+  const s = "c" + (uid++);
+  let ticks = "";
+  for (let i = 0; i < 32; i++) {
+    const a = i * Math.PI / 16, M = i % 4 === 0, r1 = M ? 34.5 : 37.5, r2 = 41;
+    ticks += `<line x1="${(60 + r1 * Math.sin(a)).toFixed(2)}" y1="${(60 - r1 * Math.cos(a)).toFixed(2)}" x2="${(60 + r2 * Math.sin(a)).toFixed(2)}" y2="${(60 - r2 * Math.cos(a)).toFixed(2)}" stroke="#403A33" stroke-width="${M ? 1.4 : .7}" opacity="${M ? .7 : .45}" stroke-linecap="round"/>`;
+  }
+  return `<svg viewBox="0 0 120 120" width="${size}" height="${size}" role="img" aria-label="הלוגו של מסע הערכים: מצפן שמחט הצפון שלו היא עלה">
+  <defs>
+    <linearGradient id="g${s}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F1DFB8"/><stop offset=".45" stop-color="#C9A56A"/><stop offset=".72" stop-color="#94703D"/><stop offset="1" stop-color="#DCC08C"/></linearGradient>
+    <radialGradient id="d${s}" cx=".42" cy=".38" r=".75"><stop offset="0" stop-color="#FFFEFA"/><stop offset="1" stop-color="#E9DECB"/></radialGradient>
+    <radialGradient id="p${s}" cx=".35" cy=".35" r=".8"><stop offset="0" stop-color="#FFF3D6"/><stop offset=".5" stop-color="#C9A56A"/><stop offset="1" stop-color="#7E5F33"/></radialGradient>
+    <linearGradient id="i${s}" x1="0" x2="1"><stop offset="0" stop-color="#6E655B"/><stop offset="1" stop-color="#2B2622"/></linearGradient>
+    <linearGradient id="b${s}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C9D5E0"/><stop offset="1" stop-color="#7F95AA"/></linearGradient>
+    <linearGradient id="r${s}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F7DFD3"/><stop offset="1" stop-color="#D5A08A"/></linearGradient>
+    <filter id="f${s}" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="1.5" stdDeviation="1.4" flood-color="#403A33" flood-opacity=".35"/></filter>
+  </defs>
+  <circle cx="60" cy="10" r="6.5" fill="none" stroke="url(#g${s})" stroke-width="3"/>
+  <rect x="55" y="15" width="10" height="7" rx="2" fill="url(#g${s})"/>
+  <g transform="translate(6 12) scale(.9)">
+    <circle cx="60" cy="62" r="49" fill="#403A33" opacity=".16"/>
+    <circle cx="60" cy="60" r="49" fill="url(#g${s})"/>
+    <circle cx="60" cy="60" r="44" fill="#8A6A3A" opacity=".55"/>
+    <circle cx="60" cy="60" r="43" fill="url(#d${s})"/>
+    ${ticks}
+    <g filter="url(#f${s})">
+      <image href="${LEAF}" x="48.37" y="20.02" width="24.07" height="41" preserveAspectRatio="none"/>
+      <path d="M60 101 L66 67 L60 60 L54 67Z" fill="url(#i${s})"/>
+      <path d="M19 60 L52 55 L60 60 L52 65Z" fill="url(#b${s})"/>
+      <path d="M101 60 L68 55 L60 60 L68 65Z" fill="url(#r${s})"/>
+    </g>
+    <circle cx="60" cy="60" r="4.6" fill="url(#p${s})"/>
+    <ellipse cx="45" cy="37" rx="22" ry="8" transform="rotate(-32 45 37)" fill="#FFFFFF" opacity=".2"/>
+  </g></svg>`;
+}
+function lighthouse(size = 84) {
+  const s = "l" + (uid++);
+  return `<svg viewBox="0 0 120 120" width="${size}" height="${size}" aria-hidden="true"><defs>
+    <clipPath id="c${s}"><circle cx="60" cy="60" r="50"/></clipPath>
+    <linearGradient id="g${s}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F1DFB8"/><stop offset=".45" stop-color="#C9A56A"/><stop offset=".72" stop-color="#94703D"/><stop offset="1" stop-color="#DCC08C"/></linearGradient>
+    <linearGradient id="k${s}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F2D3C2"/><stop offset=".7" stop-color="#FAF2E8"/></linearGradient>
+    <linearGradient id="e${s}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#BCCAD6"/><stop offset="1" stop-color="#768DA2"/></linearGradient>
+    <linearGradient id="t${s}" x1="0" x2="1"><stop offset="0" stop-color="#FBF4EB"/><stop offset=".45" stop-color="#EBDCCB"/><stop offset="1" stop-color="#B9A28D"/></linearGradient>
+    <linearGradient id="r${s}" x1="0" x2="1"><stop offset="0" stop-color="#F4D5C6"/><stop offset=".5" stop-color="#E6B6A1"/><stop offset="1" stop-color="#B98470"/></linearGradient>
+    <radialGradient id="w${s}" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#FFF6DD"/><stop offset=".45" stop-color="#F1D9A6" stop-opacity=".8"/><stop offset="1" stop-color="#F1D9A6" stop-opacity="0"/></radialGradient></defs>
+    <circle cx="60" cy="60" r="50" fill="url(#k${s})"/>
+    <g clip-path="url(#c${s})">
+      <polygon points="62,33 118,16 118,52" fill="#FFF1CF" opacity=".55"/><polygon points="58,33 2,16 2,52" fill="#FFF1CF" opacity=".55"/>
+      <circle cx="60" cy="34" r="17" fill="url(#w${s})"/>
+      <rect x="0" y="86" width="120" height="40" fill="url(#e${s})"/>
+      <path d="M32 90 C36 81 45 79 51 84 L69 84 C75 78 85 81 89 90Z" fill="#5E554C"/>
+      <polygon points="53,42 67,42 71,86 49,86" fill="url(#t${s})"/>
+      <polygon points="51.91,54 68.09,54 68.82,62 51.18,62" fill="url(#r${s})"/><polygon points="50.45,70 69.55,70 70.27,78 49.73,78" fill="url(#r${s})"/>
+      <rect x="57.5" y="79" width="5" height="7" rx="2.5" fill="#403A33" opacity=".85"/>
+      <rect x="50" y="40" width="20" height="3" rx="1" fill="#403A33"/>
+      <rect x="53.5" y="30" width="13" height="10" rx="1.5" fill="#FFF1CF" stroke="#403A33" stroke-width="1.2"/>
+      <path d="M51 30 L69 30 L60 21Z" fill="#3A332D"/>
+    </g>
+    <circle cx="60" cy="60" r="50" fill="none" stroke="url(#g${s})" stroke-width="3"/></svg>`;
+}
+
+/* ---------- shell ---------- */
+const app = document.getElementById("app");
+let current = "welcome";
+const NAV = [
+  ["map", "מפה", '<path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm0 3 2.2 6L12 18l-2.2-6Z" fill="currentColor" opacity=".9"/>'],
+  ["challenge", "אתגר", '<path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'],
+  ["garden", "גן", '<path d="M12 21v-8M12 13c-4 0-6-3-6-7 4 0 6 3 6 7Zm0 0c4 0 6-3 6-7-4 0-6 3-6 7Z" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/>'],
+  ["album", "אלבום", '<rect x="6" y="4" width="12" height="16" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><path d="M9 9h6M9 13h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'],
+  ["summary", "הפנקס", '<path d="M6 4h9l3 3v13H6Z" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/><path d="M9 11h6M9 15h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>']
+];
+function render(html, { nav = false } = {}) {
+  app.classList.toggle("has-nav", nav);
+  app.innerHTML = `<main class="screen" id="screen">${html}</main>` + (nav ? `<nav class="nav" aria-label="ניווט ראשי">${NAV.map(([id, label, icon]) =>
+    `<button type="button" data-nav="${id}" ${current === id ? 'aria-current="page"' : ""}><svg viewBox="0 0 24 24" aria-hidden="true">${icon}</svg>${label}</button>`).join("")}</nav>` : "");
+  app.querySelectorAll("[data-nav]").forEach(b => b.onclick = () => go(b.dataset.nav));
+  window.scrollTo(0, 0);
+}
+const topbar = (left = "") => `<div class="topbar"><span class="chip" aria-label="${S.coins} מטבעות"><span class="coin"></span>${S.coins}</span>${left || `<span class="chip">${level()}</span>`}</div>`;
+function toast(msg) { document.querySelector(".toast")?.remove(); const t = document.createElement("div"); t.className = "toast"; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 2400); }
+function coinPop(n, gold) { const p = document.createElement("div"); p.className = "coinpop"; p.innerHTML = `<span class="coin"></span>+${n}${gold ? " ⭐" : ""}`; document.body.appendChild(p); setTimeout(() => p.remove(), 950); }
+function addCoins(n, gold) { S.coins += n; save(); coinPop(n, gold); }
+function sheet(html) {
+  const bg = document.createElement("div"); bg.className = "sheet-bg";
+  bg.innerHTML = `<div class="sheet" role="dialog" aria-modal="true">${html}<button class="btn ghost" type="button" data-close>סגירה</button></div>`;
+  bg.onclick = e => { if (e.target === bg || e.target.hasAttribute("data-close")) bg.remove(); };
+  document.body.appendChild(bg);
+}
+
+/* ---------- router ---------- */
+function go(name, arg) {
+  current = name;
+  const screens = { welcome, map, intro, question, table, reveal, stamp, album, garden, lighthouse: lighthouseScreen, challenge, summary };
+  (screens[name] || map)(arg);
+}
+
+/* ---------- welcome ---------- */
+function welcome() {
+  if (S.started) return go("map");
+  render(`<section class="screen welcome" style="padding:0">
+    <div class="logo-big">${compassLogo(190)}</div>
+    <div style="display:grid;gap:8px"><span class="eyebrow">סקיצה לחיצה · גרסה 1</span><h1>מסע הערכים</h1></div>
+    <p class="lead">מסע קצר בין תחומי החיים: משפחה, זוגיות, קריירה ועוד. בכל תחנה עונים על כמה שאלות, אוספים קלפים ומגלים מה באמת חשוב לך.</p>
+    <div class="field"><label for="nm">איך לקרוא לך במסע?</label><input id="nm" autocomplete="given-name" placeholder="שם פרטי (לא חובה)" value="${esc(S.name)}"></div>
+    <button class="btn" type="button" id="go">יוצאים לדרך</button>
+    <p class="small muted">כל תשובה נשמרת. אפשר לעצור בכל רגע ולהמשיך אחר כך.</p>
+  </section>`);
+  document.getElementById("go").onclick = () => { S.name = document.getElementById("nm").value.trim(); S.started = true; save(); go("map"); };
+}
+
+/* ---------- map ---------- */
+function stationState(d) {
+  const st = S.domains[d.id];
+  if (st?.done) return "done";
+  if (st?.run) return "progress";
+  return "open";
+}
+function map() {
+  const next = DATA.domains.find(d => !S.domains[d.id]?.done);
+  const rows = DATA.domains.map(d => {
+    const st = stationState(d), isNext = next && d.id === next.id;
+    return `<div class="station-row"><button type="button" class="station ${DATA.domains.indexOf(d) % 2 ? "R" : "L"} ${st === "done" ? "done" : ""} ${isNext ? "next" : ""}" data-d="${d.id}" aria-label="${d.place}, ${d.name}">
+      <span class="disc">${d.icon}${st === "done" ? '<span class="stamp">✓</span>' : st === "progress" ? '<span class="half">בדרך</span>' : ""}</span>
+      <span class="label"><b>${d.place}</b><span>${d.name}</span></span></button></div>`;
+  }).join("");
+  const lhOpen = doneDomains().length >= 3 || S.peek;
+  const n = DATA.domains.length + 1;
+  const pts = Array.from({ length: n }, (_, i) => [i % 2 === 0 ? 22 : 78, (i + .5) * 108]);
+  const dPath = pts.map((p, i) => (i ? "L" : "M") + p[0] + " " + p[1]).join(" ");
+  render(`${topbar()}
+    <div class="map-head"><span class="eyebrow">מפת המסע</span><h1>${S.name ? `שלום ${esc(S.name)}` : "לאן הולכים היום?"}</h1>
+      <p class="muted">${doneDomains().length} מתוך ${DATA.domains.length} תחנות הושלמו. המגדלור נפתח אחרי 3 תחנות.</p></div>
+    <div class="map">
+      <svg class="trail" viewBox="0 0 100 ${n * 108}" preserveAspectRatio="none" aria-hidden="true"><path d="${dPath}" fill="none" stroke="#C9B48F" stroke-width="3" stroke-dasharray="2 9" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>
+      ${rows}
+      <div class="station-row"><button type="button" class="station lighthouse ${DATA.domains.length % 2 ? "R" : "L"} ${lhOpen ? "" : "locked"}" id="lh" aria-label="המגדלור, תחנת הליבה">
+        <span class="disc">${lighthouse(84)}</span><span class="label"><b>המגדלור</b><span>${S.coreDone ? "ערכי הליבה נמצאו" : lhOpen ? "תחנת הליבה פתוחה" : "תחנת הליבה · נעולה"}</span></span></button></div>
+    </div>`, { nav: true });
+  app.querySelectorAll("[data-d]").forEach(b => b.onclick = () => go("intro", b.dataset.d));
+  document.getElementById("lh").onclick = () => go("lighthouse");
+}
+
+/* ---------- domain intro ---------- */
+const STAGES = [["היכרות", "5 שאלות מהירות של זה או זה"], ["עומק", "4 דילמות מהחיים"], ["ההכרעה", "2 דילמות שבהן ערכים מתנגשים"]];
+function intro(id) {
+  const d = D[id], st = dom(id);
+  if (st.done) return go("reveal", { id, again: true });
+  const at = st.run ? st.run.stage : 0;
+  render(`<div class="topbar"><button class="iconbtn" type="button" id="back" aria-label="חזרה למפה">→</button><span class="chip"><span class="coin"></span>${S.coins}</span></div>
+    <div class="hero-card"><span class="big-icon">${d.icon}</span><span class="eyebrow">${d.name}</span><h1>${d.place}</h1>
+      ${d.intro ? `<p class="muted">${d.intro}</p>` : `<p class="muted">שלושה שלבים קצרים, בערך 7 דקות. אין תשובות נכונות, רק מה שמרגיש הכי נכון לך.</p>`}
+      <div class="steps">${STAGES.map(([n, t], i) => `<div class="step ${i < at ? "done" : ""}"><span class="n">${i < at ? "✓" : i + 1}</span><span><b>${n}</b><br><span class="small muted">${t}</span></span></div>`).join("")}</div>
+    </div>
+    <button class="btn" type="button" id="start">${st.run ? "להמשיך מאיפה שעצרנו" : "להתחיל"}</button>`);
+  document.getElementById("back").onclick = () => go("map");
+  document.getElementById("start").onclick = () => { if (!st.run) newRun(id); go("question", id); };
+}
+function draw(id, key, n) {
+  const asked = S.asked[id + key] || [];
+  const all = D[id][key].map((_, i) => i);
+  const fresh = shuffle(all.filter(i => !asked.includes(i))), old = shuffle(all.filter(i => asked.includes(i)));
+  return [...fresh, ...old].slice(0, n);
+}
+function newRun(id) {
+  const st = dom(id);
+  const items = [
+    ...draw(id, "s1", 5).map(i => ({ s: 1, i })),
+    ...draw(id, "s2", 4).map(i => ({ s: 2, i })),
+    ...draw(id, "s3", 2).map(i => ({ s: 3, i }))
+  ];
+  st.scores = {}; st.why = {}; st.tensions = []; st.chosen = [];
+  st.run = { items, pos: 0, stage: 0, gold: 2 + Math.floor(Math.random() * 7) };
+  save();
+}
+
+/* ---------- questions ---------- */
+function question(id) {
+  const d = D[id], st = dom(id), run = st.run;
+  if (!run || run.pos >= run.items.length) return go("table", id);
+  const it = run.items[run.pos], stageIdx = it.s - 1;
+  if (run.stage !== stageIdx) { run.stage = stageIdx; save(); }
+  const isGold = run.pos === run.gold;
+  const head = `<div class="q-head"><div class="topbar"><button class="iconbtn" type="button" id="exit" aria-label="יציאה למפה, ההתקדמות נשמרת">✕</button>
+      <div class="progress" aria-label="התקדמות"><i style="width:${Math.round(run.pos / run.items.length * 100)}%"></i></div>
+      <span class="chip"><span class="coin"></span>${S.coins}</span></div>
+    <div class="q-meta"><span>${d.place} · שלב ${it.s}: ${STAGES[stageIdx][0]}</span>${isGold ? '<span class="golden">⭐ שאלת זהב · מטבעות כפולים</span>' : `<span>${run.pos + 1}/${run.items.length}</span>`}</div></div>`;
+  let body = "";
+  if (it.s === 1) {
+    const q = d.s1[it.i];
+    body = `<p class="q-title">בלי לחשוב יותר מדי, מה מתאר אותך יותר?</p>
+      <div class="timer" aria-hidden="true"><i></i></div>
+      <div class="pair"><button class="tile a" type="button" data-pick="a">${q.a}</button><span class="or">או</span><button class="tile b" type="button" data-pick="b">${q.b}</button></div>`;
+  } else {
+    const q = d[it.s === 2 ? "s2" : "s3"][it.i];
+    body = `${it.s === 3 ? `<p class="note">בשלב הזה אין תשובה נכונה. לפעמים שני דברים חשובים, ורק אחד יכול לנצח.</p>` : ""}
+      <p class="q-title">${q.q}</p>
+      <div class="opts">${q.opts.map((o, k) => `<button class="opt" type="button" data-pick="${k}"><span class="letter">${LETTERS[k]}</span><span>${o.t}</span></button>`).join("")}</div>`;
+  }
+  render(head + body);
+  document.getElementById("exit").onclick = () => { toast("ההתקדמות נשמרה"); go("map"); };
+  app.querySelectorAll("[data-pick]").forEach(b => b.onclick = () => {
+    b.classList.add("picked");
+    answer(id, it, b.dataset.pick, isGold);
+    setTimeout(() => go("question", id), 380);
+  });
+}
+function answer(id, it, pick, isGold) {
+  const d = D[id], st = dom(id);
+  let vals, text, w = it.s === 3 ? 2 : 1;
+  if (it.s === 1) { const q = d.s1[it.i]; vals = pick === "a" ? q.av : q.bv; text = pick === "a" ? q.a : q.b; }
+  else { const q = d[it.s === 2 ? "s2" : "s3"][it.i], o = q.opts[+pick]; vals = o.v; text = o.t; if (it.s === 3) st.tensions.push({ tension: q.tension, choice: o.t }); }
+  vals.forEach(v => { st.scores[v] = (st.scores[v] || 0) + w; (st.why[v] ||= []).push(text); });
+  const k = id + "s" + it.s; S.asked[k] = [...new Set([...(S.asked[k] || []), it.i])];
+  st.run.pos++;
+  addCoins(isGold ? 20 : 10, isGold);
+}
+
+/* ---------- card table ---------- */
+let picked = [];
+function table(id) {
+  const st = dom(id);
+  const top = shuffle(Object.entries(st.scores)).sort((a, b) => b[1] - a[1]).slice(0, 6).map(([v]) => v);
+  st.offer ||= top; save();
+  picked = [];
+  const draw = () => {
+    render(`<div class="topbar"><span class="eyebrow">${D[id].place} · שולחן הקלפים</span><span class="chip"><span class="coin"></span>${S.coins}</span></div>
+      <h2>אלה הקלפים שעלו מהתשובות שלך</h2>
+      <p class="muted">לבחור 3 קלפים שהכי מרגישים כמוך. לפי תחושת בטן, בלי לחשוב יותר מדי.</p>
+      <div class="cards">${st.offer.map(v => `<button type="button" class="vcard ${picked.includes(v) ? "sel" : ""}" data-v="${v}" aria-pressed="${picked.includes(v)}"><span class="vi">${V[v].icon}</span><span class="vn">${v}</span></button>`).join("")}</div>
+      <p class="counter">נבחרו ${picked.length} מתוך 3</p>
+      <button class="btn gold" type="button" id="flip" ${picked.length === 3 ? "" : "disabled"}>להפוך את הקלפים</button>
+      <button class="link" type="button" id="swap">חסר לי ערך? להחליף קלף בערך אחר</button>`);
+    app.querySelectorAll("[data-v]").forEach(b => b.onclick = () => {
+      const v = b.dataset.v;
+      if (picked.includes(v)) picked = picked.filter(x => x !== v);
+      else if (picked.length < 3) picked.push(v);
+      else toast("אפשר לבחור רק 3. לחיצה על קלף שנבחר מבטלת אותו");
+      draw();
+    });
+    document.getElementById("flip").onclick = () => { st.chosen = [...picked]; save(); go("reveal", { id }); };
+    document.getElementById("swap").onclick = () => {
+      const others = DATA.values.map(v => v.name).filter(n => !st.offer.includes(n));
+      sheet(`<h3>להוסיף ערך לשולחן</h3><p class="small muted">הערך שייבחר יחליף את הקלף האחרון בשולחן.</p>
+        <div class="chips" style="max-height:46vh;overflow:auto">${others.map(n => `<button class="vchip" type="button" data-add="${n}">${V[n].icon} ${n}</button>`).join("")}</div>`);
+      document.querySelectorAll("[data-add]").forEach(b => b.onclick = () => {
+        const out = [...st.offer].reverse().find(v => !picked.includes(v));
+        st.offer = st.offer.map(v => v === out ? b.dataset.add : v); save();
+        document.querySelector(".sheet-bg")?.remove(); draw();
+      });
+    };
+  };
+  draw();
+}
+
+/* ---------- reveal ---------- */
+function reveal({ id, again }) {
+  const st = dom(id), d = D[id];
+  const rq = V[st.chosen[0]]?.reflect || "";
+  render(`<div class="topbar"><span class="eyebrow">${d.place} · ${again ? "הקלפים שלך" : "היפוך הקלפים"}</span>${again ? `<button class="iconbtn" type="button" id="back" aria-label="חזרה למפה">→</button>` : ""}</div>
+    <h2>${again ? "הקלפים שבחרת בתחום הזה" : "מה אומר כל קלף"}</h2>
+    <div class="flips">${st.chosen.map(v => `<div class="flip ${again ? "on" : ""}"><div class="flip-in">
+      <div class="face front"><span class="vi">${V[v].icon}</span><span class="vn">${v}</span></div>
+      <div class="face back"><div class="row"><span style="font-size:24px">${V[v].icon}</span><span class="vn">${v}</span></div>
+        <p>${V[v].desc}</p>
+        ${st.why[v] ? `<p class="why">למה הקלף הופיע: ${st.why[v].slice(0, 2).map(t => `"${t}"`).join(", ")}</p>` : `<p class="why">הקלף הזה נבחר מהאלבום.</p>`}</div>
+    </div></div>`).join("")}</div>
+    ${st.tensions.length ? `<div class="panel"><h3>ההכרעות שלך</h3>${st.tensions.map(t => `<div class="tension"><b>${t.tension}</b><span>בחרת: ${t.choice}</span></div>`).join("")}</div>` : ""}
+    ${again ? `<div class="panel"><h3>הרפלקציה שלך</h3><p class="${st.reflection ? "" : "muted"}">${st.reflection ? esc(st.reflection) : "לא נכתבה רפלקציה."}</p></div>
+       <button class="btn ghost" type="button" id="redo">לעבור את התחנה מחדש</button>`
+      : `<div class="panel"><h3>שאלה לרפלקציה</h3><p>${rq}</p><label class="small muted" for="rf">אפשר לכתוב משפט או שניים, או לדלג</label><textarea id="rf" placeholder="מה עולה לך?"></textarea>
+       <button class="btn" type="button" id="save">לסיים את התחנה</button><button class="link" type="button" id="skip">לדלג על השאלה</button></div>`}`);
+  if (!again) app.querySelectorAll(".flip").forEach((f, i) => setTimeout(() => f.classList.add("on"), 450 + i * 550));
+  const finish = text => { st.reflection = text; st.done = true; st.run = null; if (text) addCoins(20); save(); go("stamp", id); };
+  document.getElementById("save")?.addEventListener("click", () => finish(document.getElementById("rf").value.trim()));
+  document.getElementById("skip")?.addEventListener("click", () => finish(""));
+  document.getElementById("back")?.addEventListener("click", () => go("map"));
+  document.getElementById("redo")?.addEventListener("click", () => { st.done = false; st.offer = null; newRun(id); go("intro", id); });
+}
+function stamp(id) {
+  const d = D[id];
+  render(`<div style="flex:1;display:grid;align-content:center;gap:20px;text-align:center">
+    <div class="stamp-big">${d.place}<br><span style="font-size:15px">✓ הושלם</span></div>
+    <h1>חותמת בדרכון!</h1><p class="muted">3 קלפים חדשים נכנסו לאלבום, ו־3 פרחים נשתלו בגן הערכים.</p>
+    <button class="btn" type="button" id="m">חזרה למפה</button><button class="link" type="button" id="g">לראות את הגן</button></div>`);
+  addCoins(50);
+  document.getElementById("m").onclick = () => go("map");
+  document.getElementById("g").onclick = () => go("garden");
+}
+
+/* ---------- lighthouse ---------- */
+function lighthouseScreen() {
+  const n = doneDomains().length, open = n >= 3 || S.peek;
+  if (!open) {
+    render(`${topbar()}<div class="hero-card">${lighthouse(140)}<span class="eyebrow">תחנת הליבה</span><h1>המגדלור</h1>
+      <p class="muted">כאן מגלים את 3 הערכים שמלווים אותך בכל מקום בחיים. המגדלור נפתח אחרי 3 תחנות, וכרגע הושלמו ${n}.</p>
+      <div class="progress" style="width:100%"><i style="width:${Math.min(100, n / 3 * 100)}%"></i></div></div>
+      <button class="btn" type="button" id="m">להמשיך במסע</button>
+      <button class="link" type="button" id="peek">להציץ בכל זאת <span class="sketch-tag">רק בסקיצה</span></button>`, { nav: true });
+    document.getElementById("m").onclick = () => go("map");
+    document.getElementById("peek").onclick = () => { S.peek = true; save(); go("lighthouse"); };
+    return;
+  }
+  if (S.coreDone) return coreReveal(true);
+  const counts = {};
+  doneDomains().forEach(d => S.domains[d.id].chosen.forEach(v => counts[v] = (counts[v] || 0) + 1));
+  let cands = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
+  if (cands.length < 6) {
+    const extra = {};
+    DATA.domains.forEach(d => Object.entries(S.domains[d.id]?.scores || {}).forEach(([v, s]) => extra[v] = (extra[v] || 0) + s));
+    Object.keys(extra).sort((a, b) => extra[b] - extra[a]).forEach(v => { if (cands.length < 6 && !cands.includes(v)) cands.push(v); });
+    ["כנות", "אהבה", "חופש", "צמיחה אישית", "משמעות", "ביטחון"].forEach(v => { if (cands.length < 6 && !cands.includes(v)) cands.push(v); });
+  }
+  picked = S.core.length ? [...S.core] : [];
+  const drawBoat = () => {
+    render(`${topbar()}<span class="eyebrow">המגדלור · מבחן הסירה</span>
+      <h2>סערה בים. בסירה יש מקום ל־3 קלפים בלבד.</h2>
+      <p class="muted">אילו 3 ערכים לוקחים איתך לכל מקום בחיים? המספר על הקלף מראה בכמה תחנות הוא נבחר.</p>
+      <div class="cards">${cands.map(v => `<button type="button" class="vcard ${picked.includes(v) ? "sel" : ""}" data-v="${v}" aria-pressed="${picked.includes(v)}">${counts[v] ? `<span class="count">×${counts[v]}</span>` : ""}<span class="vi">${V[v].icon}</span><span class="vn">${v}</span></button>`).join("")}</div>
+      <p class="counter">נבחרו ${picked.length} מתוך 3</p>
+      <button class="btn gold" type="button" id="next" ${picked.length === 3 ? "" : "disabled"}>להמשיך</button>`, { nav: true });
+    app.querySelectorAll("[data-v]").forEach(b => b.onclick = () => {
+      const v = b.dataset.v;
+      if (picked.includes(v)) picked = picked.filter(x => x !== v); else if (picked.length < 3) picked.push(v); else toast("רק 3 קלפים נכנסים לסירה");
+      drawBoat();
+    });
+    document.getElementById("next").onclick = () => duel([...picked]);
+  };
+  drawBoat();
+}
+function duel(three) {
+  const pairs = [[0, 1], [0, 2], [1, 2]], wins = [0, 0, 0];
+  let k = 0;
+  const step = () => {
+    if (k === pairs.length) {
+      S.core = three.map((v, i) => [v, wins[i]]).sort((a, b) => b[1] - a[1]).map(x => x[0]);
+      S.coreDone = true; save(); addCoins(100); return coreReveal(false);
+    }
+    const [a, b] = pairs[k];
+    render(`${topbar()}<span class="eyebrow">המגדלור · זה או זה ${k + 1}/3</span>
+      <p class="q-title">אם צריך לוותר על אחד מהשניים, מה נשאר?</p>
+      <div class="pair"><button class="tile a" type="button" data-w="${a}">${V[three[a]].icon} ${three[a]}</button><span class="or">או</span><button class="tile b" type="button" data-w="${b}">${V[three[b]].icon} ${three[b]}</button></div>`);
+    app.querySelectorAll("[data-w]").forEach(x => x.onclick = () => { wins[+x.dataset.w]++; k++; step(); });
+  };
+  step();
+}
+function coreReveal(again) {
+  render(`${topbar()}<div class="hero-card">${lighthouse(110)}<span class="eyebrow">ערכי הליבה שלך</span><h1>${S.name ? `${esc(S.name)}, ` : ""}אלה שלושת הערכים שלך</h1></div>
+    <div class="flips">${S.core.map((v, i) => `<div class="flip ${again ? "on" : ""}"><div class="flip-in" style="min-height:150px">
+      <div class="face front"><span class="vi">${V[v].icon}</span><span class="vn">${i + 1}</span></div>
+      <div class="face back"><div class="row"><span style="font-size:24px">${V[v].icon}</span><span class="vn">${i + 1}. ${v}</span></div><p>${V[v].desc}</p></div></div></div>`).join("")}</div>
+    <div class="panel"><h3>שאלה מסכמת</h3><p>איך ייראו החיים שלך בעוד שנה, אם שלושת הערכים האלה יובילו אותם?</p></div>
+    <button class="btn gold" type="button" id="ch">לאתגר השבועי הראשון</button>
+    ${again ? `<button class="link" type="button" id="redo">לעבור את המגדלור מחדש</button>` : ""}`, { nav: true });
+  if (!again) app.querySelectorAll(".flip").forEach((f, i) => setTimeout(() => f.classList.add("on"), 500 + i * 650));
+  document.getElementById("ch").onclick = () => go("challenge");
+  document.getElementById("redo")?.addEventListener("click", () => { S.coreDone = false; save(); go("lighthouse"); });
+}
+
+/* ---------- challenge ---------- */
+function challengeValue() {
+  const pool = S.core.length ? S.core : doneDomains().flatMap(d => S.domains[d.id].chosen);
+  return pool.length ? pool[S.challenges % pool.length] : null;
+}
+function challenge() {
+  const v = challengeValue();
+  if (!v) {
+    render(`${topbar()}<h1>האתגר השבועי</h1><div class="empty"><span style="font-size:34px">🧭</span><p>האתגר הראשון נפתח אחרי שמסיימים תחנה ראשונה במפה.</p><button class="btn small" type="button" id="m">למפה</button></div>`, { nav: true });
+    document.getElementById("m").onclick = () => go("map"); return;
+  }
+  const r = S.reminders;
+  render(`${topbar()}<span class="eyebrow">האתגר של השבוע · מס' ${S.challenges + 1}</span>
+    <div class="challenge"><div class="row" style="display:flex;gap:8px;align-items:center"><span style="font-size:26px">${V[v].icon}</span><b>${v}</b></div>
+      <p class="task">${V[v].challenge}</p>
+      <p class="small muted">כל ערך צריך להתממש גם בעולם. אחרי שעשית, מסמנים ✓ ומקבלים 100 מטבעות, והפרח של הערך גדל בגן.</p>
+      <label class="small muted" for="cn">איך זה הרגיש? (לא חובה)</label><textarea id="cn" style="min-height:70px"></textarea>
+      <button class="btn gold" type="button" id="done">✓ עשיתי</button></div>
+    <div class="panel"><h3>תזכורת שבועית</h3>
+      <div class="toggle"><span>התראה בטלפון</span><button class="switch" type="button" role="switch" id="push" aria-checked="${r.push}" aria-label="התראה בטלפון"></button></div>
+      <div class="reminder"><div class="field"><label for="day">יום</label><select id="day">${["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"].map(x => `<option ${x === r.day ? "selected" : ""}>${x}</option>`).join("")}</select></div>
+        <div class="field"><label for="tm">שעה</label><input id="tm" type="time" value="${r.time}"></div></div>
+      <button class="btn ghost" type="button" id="cal">הוספת תזכורת קבועה ליומן <span class="sketch-tag">סקיצה</span></button></div>`, { nav: true });
+  document.getElementById("done").onclick = () => {
+    const note = document.getElementById("cn").value.trim();
+    S.notes.push({ v, task: V[v].challenge, note }); S.challenges++; save(); addCoins(100);
+    toast(`כל הכבוד! הערך "${v}" צמח בגן`); setTimeout(() => go("garden"), 700);
+  };
+  const p = document.getElementById("push");
+  p.onclick = () => { r.push = !r.push; p.setAttribute("aria-checked", r.push); save(); };
+  document.getElementById("day").onchange = e => { r.day = e.target.value; save(); };
+  document.getElementById("tm").onchange = e => { r.time = e.target.value; save(); };
+  document.getElementById("cal").onclick = () => toast(`בגרסה המלאה ייווצר אירוע ביומן: כל יום ${r.day} ב־${r.time}`);
+}
+
+/* ---------- garden ---------- */
+function flower(x, y, color, size, core, grow) {
+  const petals = Array.from({ length: 6 }, (_, i) => `<ellipse cx="0" cy="${-size * .55}" rx="${size * .32}" ry="${size * .55}" transform="rotate(${i * 60})" fill="${color}" opacity=".95"/>`).join("");
+  const h = size * 2.2 + grow * 6;
+  return `<g transform="translate(${x} ${y})">
+    <path d="M0 0 C1 ${-h * .4} -1 ${-h * .7} 0 ${-h}" stroke="#86935F" stroke-width="2" fill="none"/>
+    <path d="M0 ${-h * .45} C-8 ${-h * .5} -12 ${-h * .62} -12 ${-h * .7} C-5 ${-h * .68} -1 ${-h * .58} 0 ${-h * .45}Z" fill="#9AAA7E"/>
+    <g transform="translate(0 ${-h})">${petals}<circle r="${size * .3}" fill="${core ? "#B8935A" : "#F3E3C3"}" ${core ? 'stroke="#8C6B3A" stroke-width="1.5"' : ""}/></g></g>`;
+}
+function garden() {
+  const fam = [...FAMILIES];
+  const colors = ["#E8B9A4", "#B2BC92", "#A7B9C9", "#E6C1D0", "#D9C39A"];
+  const items = [];
+  doneDomains().forEach(d => S.domains[d.id].chosen.forEach(v => { if (!items.includes(v) && !S.core.includes(v)) items.push(v); }));
+  const grow = Math.min(4, S.challenges);
+  const W = 360, H = 260;
+  const all = [...S.core.map(v => ({ v, core: true })), ...items.map(v => ({ v, core: false }))].slice(0, 18);
+  const plants = all.map((p, i) => {
+    const row = p.core ? 0 : 1 + Math.floor((i - S.core.length) / 6), col = p.core ? i : (i - S.core.length) % 6;
+    const x = p.core ? 90 + col * 90 : 30 + col * 60 + (row % 2) * 18, y = p.core ? 160 : 190 + row * 22;
+    const c = colors[fam.indexOf(V[p.v].family) % colors.length];
+    return flower(x, y, c, p.core ? 15 : 11, p.core, p.core ? grow : 0);
+  }).join("");
+  const deco = (S.shop.includes("bench") ? `<g transform="translate(300 214)"><rect x="-22" y="-14" width="44" height="5" rx="2" fill="#A0805A"/><rect x="-20" y="-9" width="3" height="10" fill="#8C6B3A"/><rect x="17" y="-9" width="3" height="10" fill="#8C6B3A"/><rect x="-22" y="-24" width="44" height="4" rx="2" fill="#A0805A"/></g>` : "")
+    + (S.shop.includes("butterflies") ? `<g fill="#C98E76" opacity=".85"><path d="M70 60 q-8 -8 -2 -12 q4 4 2 12 q6 -8 10 -4 q-4 6 -10 4Z"/><path d="M250 44 q-7 -7 -2 -10 q3 3 2 10 q5 -7 9 -3 q-4 5 -9 3Z" fill="#A7B9C9"/></g>` : "")
+    + (S.shop.includes("lantern") ? `<g transform="translate(40 150)"><rect x="-1.5" y="0" width="3" height="60" fill="#5E554C"/><rect x="-7" y="-14" width="14" height="16" rx="3" fill="#F6E3B4" stroke="#8C6B3A"/><circle cx="0" cy="-6" r="10" fill="#FFF1CF" opacity=".5"/></g>` : "");
+  render(`${topbar()}<span class="eyebrow">גן הערכים</span><h1>הגן ${S.name ? `של ${esc(S.name)}` : "שלך"}</h1>
+    <div class="garden"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="גן הערכים: ${all.length} פרחים">
+      <circle cx="300" cy="50" r="26" fill="#F6E3B4" opacity=".8"/>
+      <path d="M0 196 C80 178 160 184 240 176 C300 170 340 178 360 174 L360 260 L0 260Z" fill="#E7DAC3"/>
+      <path d="M0 214 C90 204 200 210 360 200 L360 260 L0 260Z" fill="#DCCBAE"/>
+      ${deco}${plants}
+      ${all.length ? "" : `<text x="180" y="120" text-anchor="middle" font-family="Assistant, sans-serif" font-size="15" fill="#7A7067">הגן מחכה לפרח הראשון</text>`}
+    </svg></div>
+    ${S.core.length ? `<div class="stages" aria-label="רמת הצמיחה של ערכי הליבה">${GROW.map(([i, n], k) => `<span class="${k === grow ? "on" : ""}"><i>${i}</i>${n}</span>`).join("")}</div>
+      <p class="small muted">ערכי הליבה הם הפרחים הגדולים עם מרכז זהב. כל אתגר שבועי שמסומן ב־✓ מגדל אותם בשלב.</p>`
+      : `<p class="small muted">כל קלף שנבחר בתחנה שותל פרח. ערכי הליבה מהמגדלור יהיו הפרחים הגדולים.</p>`}
+    <div class="legend">${all.slice(0, 12).map(p => `<span>${V[p.v].icon} ${p.v}</span>`).join("")}</div>
+    <h3>החנות של הגן</h3>
+    <div class="shop">${SHOP.map(s => `<button class="item ${S.shop.includes(s.id) ? "owned" : ""}" type="button" data-buy="${s.id}"><span class="ii">${s.icon}</span>${s.name}<span class="price">${S.shop.includes(s.id) ? "בגן ✓" : `<span class="coin"></span>${s.price}`}</span></button>`).join("")}</div>`, { nav: true });
+  app.querySelectorAll("[data-buy]").forEach(b => b.onclick = () => {
+    const s = SHOP.find(x => x.id === b.dataset.buy);
+    if (S.shop.includes(s.id)) return toast(`ה${s.name} כבר בגן`);
+    if (S.coins < s.price) return toast(`חסרים ${s.price - S.coins} מטבעות. אפשר להרוויח אותם בתחנות ובאתגרים`);
+    S.coins -= s.price; S.shop.push(s.id); save(); toast(`${s.name} נוסף לגן`); garden();
+  });
+}
+
+/* ---------- album ---------- */
+function album() {
+  const f = found();
+  render(`${topbar()}<span class="eyebrow">אלבום קלפי הערכים</span><h1>התגלו ${f.size} מתוך ${DATA.values.length}</h1>
+    <p class="muted small">קלף שהתגלה אפשר לפתוח ולקרוא. קלפים שעוד לא התגלו מחכים בהמשך המסע.</p>
+    ${FAMILIES.map(fam => { const vs = DATA.values.filter(v => v.family === fam), n = vs.filter(v => f.has(v.name)).length;
+      return `<div class="fam"><h3>${fam} <span class="small muted">${n}/${vs.length}</span></h3><div class="chips">${vs.map(v =>
+        `<button class="vchip ${S.core.includes(v.name) ? "core" : f.has(v.name) ? "found" : "locked"}" type="button" data-v="${v.name}">${f.has(v.name) ? v.icon + " " : ""}${v.name}</button>`).join("")}</div></div>`; }).join("")}`, { nav: true });
+  app.querySelectorAll("[data-v]").forEach(b => b.onclick = () => {
+    const v = V[b.dataset.v];
+    if (!f.has(v.name)) return toast("הקלף הזה עוד לא התגלה. אולי הוא מחכה בתחנה הבאה");
+    sheet(`<div style="display:flex;gap:10px;align-items:center"><span style="font-size:34px">${v.icon}</span><h2>${v.name}</h2></div>
+      <div class="kv"><b>מה זה אומר</b><span>${v.desc}</span></div><div class="kv"><b>שאלה לרפלקציה</b><span>${v.reflect}</span></div>
+      <div class="kv"><b>אתגר לדוגמה</b><span>${v.challenge}</span></div><span class="small muted">משפחת ${v.family}</span>`);
+  });
+}
+
+/* ---------- summary ---------- */
+function summary() {
+  const dd = doneDomains();
+  const counts = {}; dd.forEach(d => S.domains[d.id].chosen.forEach(v => counts[v] = (counts[v] || 0) + 1));
+  const repeat = Object.entries(counts).filter(([, n]) => n > 1).sort((a, b) => b[1] - a[1]);
+  const coachText = () => [`מסע הערכים${S.name ? " · " + S.name : ""}`,
+    S.core.length ? `ערכי הליבה: ${S.core.join(", ")}` : "ערכי הליבה: עוד לא נקבעו",
+    ...dd.map(d => `${d.name}: ${S.domains[d.id].chosen.join(", ")}`),
+    ...dd.filter(d => S.domains[d.id].reflection).map(d => `רפלקציה (${d.name}): ${S.domains[d.id].reflection}`),
+    `אתגרים שבוצעו: ${S.challenges}`].join("\n");
+  render(`${topbar()}<span class="eyebrow">הפנקס שלי</span><h1>${S.name ? esc(S.name) + ", " : ""}כך נראה המסע עד עכשיו</h1>
+    <div class="panel"><h3>ערכי הליבה</h3>${S.core.length ? `<div class="core3">${S.core.map((v, i) => `<div class="vcard"><span class="rank">${i + 1}</span><span class="vi">${V[v].icon}</span><span class="vn">${v}</span></div>`).join("")}</div>`
+      : `<div class="empty"><p>יתגלו במגדלור, אחרי 3 תחנות.</p></div>`}</div>
+    <div class="panel"><h3>הערכים לפי תחום</h3>${dd.length ? dd.map(d => `<div class="drow"><span>${d.icon} ${d.name}</span><span class="vals">${S.domains[d.id].chosen.join(" · ")}</span></div>`).join("")
+      : `<div class="empty"><p>עוד לא הושלמה תחנה.</p><button class="btn small" type="button" id="m">למפה</button></div>`}</div>
+    ${repeat.length ? `<div class="panel"><h3>ערכים שחוזרים</h3>${repeat.map(([v, n]) => `<p>${V[v].icon} <b>${v}</b> הופיע ב־${n} תחומים</p>`).join("")}</div>` : ""}
+    ${dd.some(d => S.domains[d.id].reflection) ? `<div class="panel"><h3>הרפלקציות שלי</h3>${dd.filter(d => S.domains[d.id].reflection).map(d => `<div class="tension"><b>${d.name}</b><span>${esc(S.domains[d.id].reflection)}</span></div>`).join("")}</div>` : ""}
+    <div class="panel"><h3>אתגרים</h3><p>${S.challenges ? `בוצעו ${S.challenges} אתגרים` : "עוד לא בוצע אתגר"}</p>${S.notes.slice(-3).map(n => `<div class="tension"><b>✓ ${n.v}</b><span>${n.task}${n.note ? ` · "${esc(n.note)}"` : ""}</span></div>`).join("")}</div>
+    <button class="btn" type="button" id="copy">העתקת סיכום לשליחה למאמן</button>
+    <pre id="ct" class="small" hidden style="white-space:pre-wrap;background:var(--paper);padding:12px;border-radius:12px;user-select:all">${esc(coachText())}</pre>
+    <div class="panel" id="resetBox"><h3>מסע חדש</h3><p class="small muted">איפוס מתחיל מסע חדש מההתחלה. בגרסה המלאה המסע הנוכחי יישמר בארכיון, כדי שאפשר יהיה להשוות.</p>
+      <button class="btn ghost" type="button" id="reset">איפוס המסע</button></div>`, { nav: true });
+  document.getElementById("m")?.addEventListener("click", () => go("map"));
+  document.getElementById("copy").onclick = () => {
+    const show = () => { const p = document.getElementById("ct"); p.hidden = false; toast("הסיכום מוצג למטה, אפשר לסמן ולהעתיק"); };
+    try { navigator.clipboard.writeText(coachText()).then(() => toast("הסיכום הועתק"), show); } catch (e) { show(); }
+  };
+  document.getElementById("reset").onclick = () => {
+    document.getElementById("resetBox").innerHTML = `<h3>לאפס את המסע?</h3><p class="small muted">כל התשובות, הקלפים והמטבעות יימחקו מהסקיצה.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><button class="btn" type="button" id="yes">כן, לאפס</button><button class="btn ghost" type="button" id="no">ביטול</button></div>`;
+    document.getElementById("yes").onclick = () => { S = fresh(); save(); go("welcome"); };
+    document.getElementById("no").onclick = () => summary();
+  };
+}
+
+go(S.started ? "map" : "welcome");
+</script>
