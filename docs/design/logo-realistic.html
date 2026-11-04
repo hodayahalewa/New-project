@@ -1,0 +1,281 @@
+<title>לוגו מסע הערכים</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&family=Assistant:wght@400;600;700&display=swap">
+<style>
+/* Layout: one comparison card per logo direction — illustrated vs. realistic side by side, then an app-icon size test. Palette 6 "חול ופסטל". */
+:root {
+  --bg: #F3EEE6;
+  --surface: #FFFDF9;
+  --fg: #403A33;
+  --muted: #7A7067;
+  --line: #E4DBCE;
+  --accent: #B8935A;
+  --tile: #FAF6F0;
+  --font-display: "Frank Ruhl Libre", "David Libre", Georgia, serif;
+  --font-body: "Assistant", "Heebo", "Segoe UI", Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1C1916; --surface: #26221E; --fg: #F1EBE2; --muted: #B5ABA0;
+    --line: #3A342E; --accent: #D2B07A; --tile: #FAF6F0; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1C1916; --surface: #26221E; --fg: #F1EBE2; --muted: #B5ABA0;
+  --line: #3A342E; --accent: #D2B07A; --tile: #FAF6F0; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { background: var(--bg); }
+body {
+  color: var(--fg); font-family: var(--font-body); font-size: 16px; line-height: 1.6; direction: rtl;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 32px 64px;
+}
+.wrap { max-width: 980px; margin: 0 auto; display: grid; gap: 32px; }
+header { display: grid; gap: 8px; }
+.eyebrow { font-size: 13px; letter-spacing: .08em; color: var(--accent); font-weight: 700; }
+h1 { font-family: var(--font-display); font-weight: 500; font-size: clamp(30px, 6vw, 44px); line-height: 1.15; margin: 0; text-wrap: balance; }
+.lead { color: var(--muted); max-width: 62ch; margin: 0; }
+
+.logo-card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 20px; display: grid; gap: 16px; }
+.logo-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.letter { font-family: var(--font-display); font-size: 36px; line-height: 1; color: var(--accent); }
+.logo-head h2 { font-family: var(--font-display); font-weight: 500; font-size: 24px; margin: 0; }
+.logo-head p { margin: 0; color: var(--muted); font-size: 14px; }
+
+.pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 14px; }
+.tile { background: var(--tile); border-radius: 12px; padding: 18px 14px 14px; display: grid; justify-items: center; gap: 8px; border: 1px solid #E8DFD2; min-width: 0; }
+.tile.new { border-color: #B8935A; box-shadow: 0 0 0 1px #B8935A; }
+.tag { font-size: 12px; font-weight: 700; letter-spacing: .04em; color: #7A7067; }
+.tile.new .tag { color: #8C6B3A; }
+.tile svg.big { width: 150px; height: 150px; max-width: 100%; }
+.wordmark { font-family: var(--font-display); font-size: 26px; font-weight: 500; color: #403A33; line-height: 1.1; }
+.sizes { display: flex; gap: 14px; align-items: end; padding-top: 6px; border-top: 1px dashed #E0D6C8; width: 100%; justify-content: center; }
+.sizes figure { margin: 0; display: grid; justify-items: center; gap: 4px; }
+.sizes figcaption { font-size: 11px; color: #7A7067; font-variant-numeric: tabular-nums; }
+.app-icon { border-radius: 22%; background: #FAF6F0; box-shadow: 0 1px 3px rgba(64,58,51,.25); display: grid; place-items: center; overflow: hidden; }
+.app-icon svg { width: 100%; height: 100%; }
+
+.notes { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 20px; display: grid; gap: 8px; }
+.notes h2 { font-family: var(--font-display); font-weight: 500; font-size: 22px; margin: 0; }
+.notes ul { margin: 0; padding-inline-start: 20px; display: grid; gap: 4px; }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">מסע הערכים · פלטה 6 · חול ופסטל</div>
+    <h1>לוגו: ציורי מול ריאליסטי</h1>
+    <p class="lead">כל כיוון מופיע פעמיים: בגרסה הציורית הקודמת, ובגרסה ריאליסטית יותר, עם עומק, הצללה, ברק של זהב ועורקים בעלים. מתחת לכל גרסה יש בדיקה בגודל של אייקון אפליקציה במסך הטלפון.</p>
+  </header>
+  <div id="list" class="wrap" style="gap:24px"></div>
+  <section class="notes">
+    <h2>מה כדאי לבדוק</h2>
+    <ul>
+      <li>איזו גרסה מרגישה יותר "את העסק שלך" בגודל הגדול?</li>
+      <li>איזו גרסה עדיין ברורה בגודל הקטן, כמו אייקון במסך הבית?</li>
+      <li>אפשר גם לשלב: גרסה ריאליסטית בתוך האפליקציה ובמסך הפתיחה, וגרסה פשוטה יותר לאייקון הקטן.</li>
+    </ul>
+  </section>
+</div>
+
+<script>
+const C = { bg: "#FAF6F0", green: "#BFC8A4", pink: "#EFC9B8", blue: "#A7B9C9", ink: "#403A33", gold: "#B8935A" };
+
+const FLAT = {
+  A: () => `
+    <circle cx="60" cy="60" r="46" fill="none" stroke="${C.gold}" stroke-width="2.5"/>
+    <circle cx="60" cy="60" r="38" fill="none" stroke="${C.ink}" stroke-width="1" opacity=".25"/>
+    <path d="M60 18 C72 34 72 50 60 60 C48 50 48 34 60 18Z" fill="${C.green}"/>
+    <path d="M60 24 L60 56" stroke="${C.bg}" stroke-width="1.4"/>
+    <path d="M60 100 L66 68 L60 60 L54 68Z" fill="${C.ink}"/>
+    <path d="M20 60 L52 55 L60 60 L52 65Z" fill="${C.blue}"/>
+    <path d="M100 60 L68 55 L60 60 L68 65Z" fill="${C.pink}"/>
+    <circle cx="60" cy="60" r="3.5" fill="${C.gold}"/>`,
+  B: () => `
+    <polygon points="68,32 106,20 106,46" fill="${C.gold}" opacity=".35"/>
+    <polygon points="52,32 14,20 14,46" fill="${C.gold}" opacity=".35"/>
+    <polygon points="50,30 70,30 60,21" fill="${C.ink}"/>
+    <rect x="52" y="30" width="16" height="10" rx="2" fill="${C.gold}"/>
+    <polygon points="54,40 66,40 70,86 50,86" fill="${C.pink}"/>
+    <polygon points="53.1,56 66.9,56 67.4,62 52.6,62" fill="${C.bg}"/>
+    <polygon points="51.7,72 68.3,72 68.8,78 51.2,78" fill="${C.bg}"/>
+    <path d="M14 92 q11 -7 22 0 t22 0 t22 0 t22 0 t22 0" fill="none" stroke="${C.blue}" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M24 102 q9 -5 18 0 t18 0 t18 0 t18 0" fill="none" stroke="${C.green}" stroke-width="3" stroke-linecap="round"/>`,
+  C: () => `
+    <path d="M42 104 C40 86 80 82 74 64 C70 52 56 54 60 42" fill="none" stroke="${C.blue}" stroke-width="6" stroke-linecap="round"/>
+    <path d="M42 104 C40 86 80 82 74 64 C70 52 56 54 60 42" fill="none" stroke="${C.bg}" stroke-width="1.5" stroke-dasharray="2 6" stroke-linecap="round"/>
+    <path d="M60 42 C47 40 41 30 43 20 C54 22 61 30 60 42Z" fill="${C.green}"/>
+    <path d="M60 42 C70 35 81 35 86 26 C75 21 64 28 60 42Z" fill="${C.pink}"/>
+    <circle cx="42" cy="104" r="5" fill="${C.gold}"/>`,
+  D: () => `
+    <g transform="rotate(-8 60 60)">
+      <rect x="32" y="22" width="56" height="76" rx="9" fill="${C.blue}" stroke="${C.gold}" stroke-width="2"/>
+      <rect x="38" y="28" width="44" height="64" rx="6" fill="none" stroke="${C.bg}" stroke-width="1" opacity=".8"/>
+      <path d="M60 82 L60 56" stroke="${C.ink}" stroke-width="3" stroke-linecap="round"/>
+      <path d="M60 62 C49 60 45 51 47 44 C56 46 60 53 60 62Z" fill="${C.green}"/>
+      <path d="M60 57 C69 53 75 46 75 39 C66 39 60 46 60 57Z" fill="${C.pink}"/>
+      <path d="M77 30 L79 35 L84 36 L79 38 L77 43 L75 38 L70 36 L75 35Z" fill="${C.gold}"/>
+    </g>`
+};
+
+/* Shared gradients; every id carries a suffix so several copies can live on one page. */
+const defs = s => `
+  <linearGradient id="gold${s}" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#F1DFB8"/><stop offset=".45" stop-color="#C9A56A"/>
+    <stop offset=".72" stop-color="#94703D"/><stop offset="1" stop-color="#DCC08C"/>
+  </linearGradient>
+  <radialGradient id="pin${s}" cx=".35" cy=".35" r=".8">
+    <stop offset="0" stop-color="#FFF3D6"/><stop offset=".5" stop-color="#C9A56A"/><stop offset="1" stop-color="#7E5F33"/>
+  </radialGradient>
+  <linearGradient id="leafG${s}" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#E2E8CE"/><stop offset=".5" stop-color="#B2BC92"/><stop offset="1" stop-color="#7D8A5B"/>
+  </linearGradient>
+  <linearGradient id="leafP${s}" x1="1" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#F9E6DC"/><stop offset=".55" stop-color="#E8B9A4"/><stop offset="1" stop-color="#C98E76"/>
+  </linearGradient>
+  <linearGradient id="stem${s}" x1="0" x2="1">
+    <stop offset="0" stop-color="#B5C095"/><stop offset="1" stop-color="#6E7A50"/>
+  </linearGradient>
+  <filter id="sh${s}" x="-30%" y="-30%" width="160%" height="160%">
+    <feDropShadow dx="0" dy="1.5" stdDeviation="1.4" flood-color="#403A33" flood-opacity=".35"/>
+  </filter>`;
+
+function ticks() {
+  let out = "";
+  for (let i = 0; i < 32; i++) {
+    const a = i * Math.PI / 16, major = i % 4 === 0;
+    const r1 = major ? 34.5 : 37.5, r2 = 41;
+    const x1 = 60 + r1 * Math.sin(a), y1 = 60 - r1 * Math.cos(a);
+    const x2 = 60 + r2 * Math.sin(a), y2 = 60 - r2 * Math.cos(a);
+    out += `<line x1="${x1.toFixed(2)}" y1="${y1.toFixed(2)}" x2="${x2.toFixed(2)}" y2="${y2.toFixed(2)}" stroke="#403A33" stroke-width="${major ? 1.4 : .7}" opacity="${major ? .7 : .45}" stroke-linecap="round"/>`;
+  }
+  return out;
+}
+
+const REAL = {
+  A: s => `<defs>${defs(s)}
+      <radialGradient id="dial${s}" cx=".42" cy=".38" r=".75"><stop offset="0" stop-color="#FFFEFA"/><stop offset="1" stop-color="#E9DECB"/></radialGradient>
+      <linearGradient id="ink${s}" x1="0" x2="1"><stop offset="0" stop-color="#6E655B"/><stop offset="1" stop-color="#2B2622"/></linearGradient>
+      <linearGradient id="blu${s}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C9D5E0"/><stop offset="1" stop-color="#7F95AA"/></linearGradient>
+      <linearGradient id="pnk${s}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F7DFD3"/><stop offset="1" stop-color="#D5A08A"/></linearGradient>
+    </defs>
+    <circle cx="60" cy="62" r="49" fill="#403A33" opacity=".16"/>
+    <circle cx="60" cy="60" r="49" fill="url(#gold${s})"/>
+    <circle cx="60" cy="60" r="44" fill="#8A6A3A" opacity=".55"/>
+    <circle cx="60" cy="60" r="43" fill="url(#dial${s})"/>
+    ${ticks()}
+    <g filter="url(#sh${s})">
+      <path d="M60 19 C71 33 71 49 60 60 C49 49 49 33 60 19Z" fill="url(#leafG${s})"/>
+      <path d="M60 23 L60 57" stroke="#6E7A50" stroke-width=".9" opacity=".85"/>
+      <path d="M60 32 L55.5 28 M60 38 L54 33.5 M60 44 L53.5 40 M60 32 L64.5 28 M60 38 L66 33.5 M60 44 L66.5 40" stroke="#F4F2E6" stroke-width=".6" opacity=".75" fill="none"/>
+      <path d="M60 101 L66 67 L60 60 L54 67Z" fill="url(#ink${s})"/>
+      <path d="M19 60 L52 55 L60 60 L52 65Z" fill="url(#blu${s})"/>
+      <path d="M101 60 L68 55 L60 60 L68 65Z" fill="url(#pnk${s})"/>
+    </g>
+    <circle cx="60" cy="60" r="4.6" fill="url(#pin${s})"/>
+    <ellipse cx="45" cy="37" rx="22" ry="8" transform="rotate(-32 45 37)" fill="#FFFFFF" opacity=".22"/>`,
+
+  B: s => `<defs>${defs(s)}
+      <clipPath id="clip${s}"><circle cx="60" cy="60" r="50"/></clipPath>
+      <linearGradient id="sky${s}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F2D3C2"/><stop offset=".7" stop-color="#FAF2E8"/></linearGradient>
+      <linearGradient id="sea${s}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#BCCAD6"/><stop offset="1" stop-color="#768DA2"/></linearGradient>
+      <linearGradient id="tow${s}" x1="0" x2="1"><stop offset="0" stop-color="#FBF4EB"/><stop offset=".45" stop-color="#EBDCCB"/><stop offset="1" stop-color="#B9A28D"/></linearGradient>
+      <linearGradient id="str${s}" x1="0" x2="1"><stop offset="0" stop-color="#F4D5C6"/><stop offset=".5" stop-color="#E6B6A1"/><stop offset="1" stop-color="#B98470"/></linearGradient>
+      <linearGradient id="rock${s}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8A7F74"/><stop offset="1" stop-color="#403A33"/></linearGradient>
+      <linearGradient id="roof${s}" x1="0" x2="1"><stop offset="0" stop-color="#70675D"/><stop offset="1" stop-color="#2B2622"/></linearGradient>
+      <radialGradient id="glow${s}" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#FFF6DD"/><stop offset=".45" stop-color="#F1D9A6" stop-opacity=".8"/><stop offset="1" stop-color="#F1D9A6" stop-opacity="0"/></radialGradient>
+      <linearGradient id="beamR${s}" gradientUnits="userSpaceOnUse" x1="60" y1="0" x2="118" y2="0"><stop offset="0" stop-color="#FFF1CF" stop-opacity=".9"/><stop offset="1" stop-color="#FFF1CF" stop-opacity="0"/></linearGradient>
+      <linearGradient id="beamL${s}" gradientUnits="userSpaceOnUse" x1="60" y1="0" x2="2" y2="0"><stop offset="0" stop-color="#FFF1CF" stop-opacity=".9"/><stop offset="1" stop-color="#FFF1CF" stop-opacity="0"/></linearGradient>
+    </defs>
+    <circle cx="60" cy="62" r="50" fill="#403A33" opacity=".14"/>
+    <circle cx="60" cy="60" r="50" fill="url(#sky${s})"/>
+    <g clip-path="url(#clip${s})">
+      <polygon points="62,33 118,16 118,52" fill="url(#beamR${s})"/>
+      <polygon points="58,33 2,16 2,52" fill="url(#beamL${s})"/>
+      <circle cx="60" cy="34" r="17" fill="url(#glow${s})"/>
+      <rect x="0" y="86" width="120" height="40" fill="url(#sea${s})"/>
+      <path d="M8 93 q6 -2 12 0 M30 98 q7 -2 14 0 M76 95 q6 -2 12 0 M92 101 q7 -2 14 0 M14 104 q6 -2 12 0 M58 104 q7 -2 14 0" stroke="#E6EDF3" stroke-width="1" fill="none" opacity=".75" stroke-linecap="round"/>
+      <path d="M32 90 C36 81 45 79 51 84 L69 84 C75 78 85 81 89 90Z" fill="url(#rock${s})"/>
+      <polygon points="53,42 67,42 71,86 49,86" fill="url(#tow${s})"/>
+      <polygon points="51.91,54 68.09,54 68.82,62 51.18,62" fill="url(#str${s})"/>
+      <polygon points="50.45,70 69.55,70 70.27,78 49.73,78" fill="url(#str${s})"/>
+      <rect x="58.5" y="64" width="3" height="4" rx="1" fill="#403A33" opacity=".7"/>
+      <rect x="57.5" y="79" width="5" height="7" rx="2.5" fill="#403A33" opacity=".85"/>
+      <rect x="50" y="40" width="20" height="3" rx="1" fill="#403A33"/>
+      <rect x="53.5" y="30" width="13" height="10" rx="1.5" fill="#FFF1CF" stroke="#403A33" stroke-width="1.2"/>
+      <path d="M57.8 30 V40 M62.2 30 V40" stroke="#403A33" stroke-width=".8"/>
+      <path d="M51 30 L69 30 L60 21Z" fill="url(#roof${s})"/>
+      <circle cx="60" cy="20" r="1.7" fill="url(#pin${s})"/>
+    </g>
+    <circle cx="60" cy="60" r="50" fill="none" stroke="url(#gold${s})" stroke-width="3"/>`,
+
+  C: s => `<defs>${defs(s)}
+      <radialGradient id="badge${s}" cx=".45" cy=".35" r=".8"><stop offset="0" stop-color="#FFFDF8"/><stop offset="1" stop-color="#EEE3D3"/></radialGradient>
+      <radialGradient id="soil${s}" cx=".5" cy=".3" r=".7"><stop offset="0" stop-color="#D9C4A2"/><stop offset="1" stop-color="#9C7F5B"/></radialGradient>
+      <linearGradient id="road${s}" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#E9DAC2"/><stop offset="1" stop-color="#F6EEE1"/></linearGradient>
+    </defs>
+    <circle cx="60" cy="62" r="50" fill="#403A33" opacity=".14"/>
+    <circle cx="60" cy="60" r="50" fill="url(#badge${s})"/>
+    <circle cx="60" cy="60" r="50" fill="none" stroke="url(#gold${s})" stroke-width="2.5"/>
+    <ellipse cx="60" cy="101" rx="36" ry="8" fill="url(#soil${s})"/>
+    <path d="M42 101 C40 86 80 82 74 64 C70 52 56 54 60 45" fill="none" stroke="#BCA586" stroke-width="9.5" stroke-linecap="round"/>
+    <path d="M42 101 C40 86 80 82 74 64 C70 52 56 54 60 45" fill="none" stroke="url(#road${s})" stroke-width="7" stroke-linecap="round"/>
+    <path d="M42 101 C40 86 80 82 74 64 C70 52 56 54 60 45" fill="none" stroke="#FFFFFF" stroke-width="1" stroke-dasharray="2 5" opacity=".7" stroke-linecap="round"/>
+    <path d="M60 46 L60 38" stroke="url(#stem${s})" stroke-width="2.6" stroke-linecap="round"/>
+    <g filter="url(#sh${s})">
+      <path d="M60 40 C47 38 40 28 42 17 C54 19 62 28 60 40Z" fill="url(#leafG${s})"/>
+      <path d="M60 40 C70 33 82 33 88 23 C76 18 64 26 60 40Z" fill="url(#leafP${s})"/>
+    </g>
+    <path d="M59.5 39 C54 32 48 25 43 18" stroke="#F4F4E8" stroke-width=".8" opacity=".8" fill="none"/>
+    <path d="M60.5 39 C68 31 78 26 87 23" stroke="#FFF6F0" stroke-width=".8" opacity=".85" fill="none"/>
+    <ellipse cx="50" cy="27" rx="1.6" ry="2" fill="#FFFFFF" opacity=".85"/>
+    <circle cx="42" cy="101" r="4.5" fill="url(#pin${s})"/>`,
+
+  D: s => `<defs>${defs(s)}
+      <linearGradient id="paper${s}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFDF8"/><stop offset="1" stop-color="#ECE1D0"/></linearGradient>
+      <filter id="shc${s}" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#403A33" flood-opacity=".3"/></filter>
+    </defs>
+    <g transform="rotate(-8 60 60)">
+      <rect x="32" y="22" width="56" height="76" rx="9" fill="url(#paper${s})" stroke="url(#gold${s})" stroke-width="2.5" filter="url(#shc${s})"/>
+      <rect x="37.5" y="27.5" width="45" height="65" rx="6" fill="none" stroke="url(#gold${s})" stroke-width=".8"/>
+      <circle cx="60" cy="58" r="17" fill="#A7B9C9" opacity=".32"/>
+      <ellipse cx="60" cy="84" rx="10" ry="2.6" fill="#9C7F5B" opacity=".75"/>
+      <path d="M60 84 C60 76 60 66 60 57" stroke="url(#stem${s})" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+      <g filter="url(#sh${s})">
+        <path d="M60 64 C49 62 44 53 46 45 C56 47 61 55 60 64Z" fill="url(#leafG${s})"/>
+        <path d="M60 59 C69 55 76 48 76 40 C66 40 60 48 60 59Z" fill="url(#leafP${s})"/>
+      </g>
+      <path d="M59.6 63 C55 57 50 51 46.5 45.5" stroke="#F4F4E8" stroke-width=".7" opacity=".8" fill="none"/>
+      <path d="M60.4 58 C65 53 71 47 75.5 40.5" stroke="#FFF6F0" stroke-width=".7" opacity=".85" fill="none"/>
+      <path d="M77 30 L79 35 L84 36 L79 38 L77 43 L75 38 L70 36 L75 35Z" fill="url(#gold${s})"/>
+    </g>`
+};
+
+const LOGOS = [
+  { k: "A", id: "א", name: "מצפן ועלה", note: "בגרסה הריאליסטית: טבעת זהב מבריקה, לוח שנתות, עלה עם עורקים וזכוכית" },
+  { k: "B", id: "ב", name: "המגדלור", note: "בגרסה הריאליסטית: מגדלור עם נפח, אור זוהר, סלעים וים בשקיעה" },
+  { k: "C", id: "ג", name: "שביל שצומח", note: "בגרסה הריאליסטית: שביל חול, אדמה, עלים עם עורקים וטיפת טל" },
+  { k: "D", id: "ד", name: "קלף ונבט", note: "בגרסה הריאליסטית: קלף נייר עם מסגרת זהב, צל ונבט באדמה" }
+];
+
+let n = 0;
+const svg = (body, cls, size) => `<svg viewBox="0 0 120 120" ${cls ? `class="${cls}"` : ""} ${size ? `width="${size}" height="${size}"` : ""} aria-hidden="true">${body}</svg>`;
+const icon = (body, px) => `<figure><div class="app-icon" style="width:${px}px;height:${px}px">${svg(body)}</div><figcaption>${px} פיקסל</figcaption></figure>`;
+
+document.getElementById("list").innerHTML = LOGOS.map(l => {
+  const flat = FLAT[l.k]();
+  const real = () => REAL[l.k]("_" + (n++));
+  return `<article class="logo-card">
+    <div class="logo-head"><span class="letter">${l.id}</span><h2>${l.name}</h2><p>${l.note}</p></div>
+    <div class="pair">
+      <div class="tile"><span class="tag">ציורי · קודם</span>${svg(flat, "big")}<span class="wordmark">מסע הערכים</span>
+        <div class="sizes">${icon(flat, 60)}${icon(flat, 32)}</div></div>
+      <div class="tile new"><span class="tag">ריאליסטי · חדש</span>${svg(real(), "big")}<span class="wordmark">מסע הערכים</span>
+        <div class="sizes">${icon(real(), 60)}${icon(real(), 32)}</div></div>
+    </div>
+  </article>`;
+}).join("");
+</script>
