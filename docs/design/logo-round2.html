@@ -1,0 +1,209 @@
+<title>לוגו מסע הערכים, סבב 2</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&family=Assistant:wght@400;600;700&display=swap">
+<style>
+/* Layout: what's decided first (path + lighthouse), then new candidates for compass and card as labelled tiles. Palette 6 "חול ופסטל". */
+:root {
+  --bg: #F3EEE6; --surface: #FFFDF9; --fg: #403A33; --muted: #7A7067; --line: #E4DBCE; --accent: #B8935A; --tile: #FAF6F0;
+  --font-display: "Frank Ruhl Libre", "David Libre", Georgia, serif;
+  --font-body: "Assistant", "Heebo", "Segoe UI", Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg: #1C1916; --surface: #26221E; --fg: #F1EBE2; --muted: #B5ABA0; --line: #3A342E; --accent: #D2B07A; --tile: #FAF6F0; color-scheme: dark; }
+}
+:root[data-theme="dark"] { --bg: #1C1916; --surface: #26221E; --fg: #F1EBE2; --muted: #B5ABA0; --line: #3A342E; --accent: #D2B07A; --tile: #FAF6F0; color-scheme: dark; }
+* { box-sizing: border-box; }
+html, body { background: var(--bg); }
+body {
+  color: var(--fg); font-family: var(--font-body); font-size: 16px; line-height: 1.6; direction: rtl;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 32px 64px;
+}
+.wrap { max-width: 980px; margin: 0 auto; display: grid; gap: 36px; }
+header { display: grid; gap: 8px; }
+.eyebrow { font-size: 13px; letter-spacing: .08em; color: var(--accent); font-weight: 700; }
+h1 { font-family: var(--font-display); font-weight: 500; font-size: clamp(30px, 6vw, 44px); line-height: 1.15; margin: 0; text-wrap: balance; }
+h2 { font-family: var(--font-display); font-weight: 500; font-size: 26px; margin: 0; }
+.lead { color: var(--muted); max-width: 62ch; margin: 0; }
+section { display: grid; gap: 14px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr)); gap: 16px; }
+.tile { background: var(--tile); border: 1px solid #E8DFD2; border-radius: 14px; padding: 16px 14px 14px; display: grid; justify-items: center; gap: 8px; min-width: 0; }
+.tile.chosen { border-color: #B8935A; box-shadow: 0 0 0 1px #B8935A; }
+.code { font-family: var(--font-display); font-size: 22px; font-weight: 700; color: #8C6B3A; justify-self: start; line-height: 1; }
+.tile svg, .tile img { width: 170px; height: 170px; max-width: 100%; border-radius: 10px; object-fit: cover; }
+.wordmark { font-family: var(--font-display); font-size: 24px; font-weight: 500; color: #403A33; line-height: 1.1; }
+.desc { font-size: 13px; color: #7A7067; text-align: center; }
+.badge { font-size: 12px; font-weight: 700; color: #FAF6F0; background: #8C6B3A; border-radius: 99px; padding: 2px 10px; }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">מסע הערכים · פלטה 6 · חול ופסטל</div>
+    <h1>לוגו: מה נבחר, ודוגמאות חדשות</h1>
+    <p class="lead">השביל שצומח והמגדלור כבר נבחרו. למצפן ולקלף יש דוגמאות חדשות: אחת בסגנון תמונה, והשאר בסגנון הריאליסטי שבחרת למגדלור.</p>
+  </header>
+
+  <section>
+    <h2>נבחרו</h2>
+    <div class="grid">
+      <div class="tile chosen"><span class="badge">נבחר</span><img src="img/path.jpg" alt="נבט עם עלה ירוק ועלה ורוד בסוף שביל חלוקים, בתוך עיגול זהב"><span class="wordmark">מסע הערכים</span><span class="desc">שביל שצומח · התמונה שצירפת</span></div>
+      <div class="tile chosen"><span class="badge">נבחר</span><svg viewBox="0 0 120 120" id="lh" aria-label="מגדלור ריאליסטי בשקיעה"></svg><span class="wordmark">מסע הערכים</span><span class="desc">המגדלור · גרסה ריאליסטית</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>מצפן: דוגמאות חדשות</h2>
+    <div class="grid">
+      <div class="tile"><span class="code">א3</span><img src="img/compass-photo.jpg" alt="מצפן פליז שמחט הצפון שלו היא עלה ירוק"><span class="wordmark">מסע הערכים</span><span class="desc">מצפן פליז ועלה אמיתי · סגנון תמונה</span></div>
+      <div class="tile"><span class="code">א4</span><svg viewBox="0 0 120 120" id="a4" aria-label="מצפן כיס עם עלה"></svg><span class="wordmark">מסע הערכים</span><span class="desc">מצפן כיס עם טבעת תלייה, ועלה במקום מחט הצפון</span></div>
+      <div class="tile"><span class="code">א5</span><svg viewBox="0 0 120 120" id="a5" aria-label="מצפן שנבט צומח ממרכזו"></svg><span class="wordmark">מסע הערכים</span><span class="desc">לוח מצפן שנבט צומח ממרכזו, כמו בשביל שבחרת</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>קלף: דוגמאות חדשות</h2>
+    <div class="grid">
+      <div class="tile"><span class="code">ד2</span><svg viewBox="0 0 120 120" id="d2" aria-label="קלף נייר עומד עם נבט"></svg><span class="wordmark">מסע הערכים</span><span class="desc">קלף נייר עומד, עם מסגרת זהב ונבט</span></div>
+      <div class="tile"><span class="code">ד3</span><svg viewBox="0 0 120 120" id="d3" aria-label="שלושה קלפים בפריסה"></svg><span class="wordmark">מסע הערכים</span><span class="desc">שלושה קלפים בפריסת יד, ונבט בקלף האמצעי</span></div>
+    </div>
+  </section>
+</div>
+
+<script>
+const defs = s => `
+  <linearGradient id="gold${s}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F1DFB8"/><stop offset=".45" stop-color="#C9A56A"/><stop offset=".72" stop-color="#94703D"/><stop offset="1" stop-color="#DCC08C"/></linearGradient>
+  <radialGradient id="pin${s}" cx=".35" cy=".35" r=".8"><stop offset="0" stop-color="#FFF3D6"/><stop offset=".5" stop-color="#C9A56A"/><stop offset="1" stop-color="#7E5F33"/></radialGradient>
+  <linearGradient id="leafG${s}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E2E8CE"/><stop offset=".5" stop-color="#B2BC92"/><stop offset="1" stop-color="#7D8A5B"/></linearGradient>
+  <linearGradient id="leafP${s}" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F9E6DC"/><stop offset=".55" stop-color="#E8B9A4"/><stop offset="1" stop-color="#C98E76"/></linearGradient>
+  <linearGradient id="stem${s}" x1="0" x2="1"><stop offset="0" stop-color="#B5C095"/><stop offset="1" stop-color="#6E7A50"/></linearGradient>
+  <radialGradient id="dial${s}" cx=".42" cy=".38" r=".75"><stop offset="0" stop-color="#FFFEFA"/><stop offset="1" stop-color="#E9DECB"/></radialGradient>
+  <radialGradient id="soil${s}" cx=".5" cy=".3" r=".7"><stop offset="0" stop-color="#D9C4A2"/><stop offset="1" stop-color="#9C7F5B"/></radialGradient>
+  <linearGradient id="paper${s}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFDF8"/><stop offset="1" stop-color="#ECE1D0"/></linearGradient>
+  <filter id="sh${s}" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="1.5" stdDeviation="1.4" flood-color="#403A33" flood-opacity=".35"/></filter>
+  <filter id="shc${s}" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#403A33" flood-opacity=".28"/></filter>`;
+
+function ticks(cx, cy) {
+  let out = "";
+  for (let i = 0; i < 32; i++) {
+    const a = i * Math.PI / 16, major = i % 4 === 0, r1 = major ? 34.5 : 37.5, r2 = 41;
+    out += `<line x1="${(cx + r1 * Math.sin(a)).toFixed(2)}" y1="${(cy - r1 * Math.cos(a)).toFixed(2)}" x2="${(cx + r2 * Math.sin(a)).toFixed(2)}" y2="${(cy - r2 * Math.cos(a)).toFixed(2)}" stroke="#403A33" stroke-width="${major ? 1.4 : .7}" opacity="${major ? .7 : .45}" stroke-linecap="round"/>`;
+  }
+  return out;
+}
+const leaves = s => `
+  <g filter="url(#sh${s})">
+    <path d="M60 58 C46 56 38 45 40 33 C53 35 62 45 60 58Z" fill="url(#leafG${s})"/>
+    <path d="M60 56 C71 48 83 47 89 37 C76 31 64 40 60 56Z" fill="url(#leafP${s})"/>
+  </g>
+  <path d="M59.5 57 C53 49 46 41 41 34" stroke="#F4F4E8" stroke-width=".8" opacity=".8" fill="none"/>
+  <path d="M60.5 55 C68 47 79 41 88 37.5" stroke="#FFF6F0" stroke-width=".8" opacity=".85" fill="none"/>`;
+
+const LIGHTHOUSE = s => `<defs>${defs(s)}
+  <clipPath id="clip${s}"><circle cx="60" cy="60" r="50"/></clipPath>
+  <linearGradient id="sky${s}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F2D3C2"/><stop offset=".7" stop-color="#FAF2E8"/></linearGradient>
+  <linearGradient id="sea${s}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#BCCAD6"/><stop offset="1" stop-color="#768DA2"/></linearGradient>
+  <linearGradient id="tow${s}" x1="0" x2="1"><stop offset="0" stop-color="#FBF4EB"/><stop offset=".45" stop-color="#EBDCCB"/><stop offset="1" stop-color="#B9A28D"/></linearGradient>
+  <linearGradient id="str${s}" x1="0" x2="1"><stop offset="0" stop-color="#F4D5C6"/><stop offset=".5" stop-color="#E6B6A1"/><stop offset="1" stop-color="#B98470"/></linearGradient>
+  <linearGradient id="rock${s}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8A7F74"/><stop offset="1" stop-color="#403A33"/></linearGradient>
+  <linearGradient id="roof${s}" x1="0" x2="1"><stop offset="0" stop-color="#70675D"/><stop offset="1" stop-color="#2B2622"/></linearGradient>
+  <radialGradient id="glow${s}" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#FFF6DD"/><stop offset=".45" stop-color="#F1D9A6" stop-opacity=".8"/><stop offset="1" stop-color="#F1D9A6" stop-opacity="0"/></radialGradient>
+  <linearGradient id="beamR${s}" gradientUnits="userSpaceOnUse" x1="60" y1="0" x2="118" y2="0"><stop offset="0" stop-color="#FFF1CF" stop-opacity=".9"/><stop offset="1" stop-color="#FFF1CF" stop-opacity="0"/></linearGradient>
+  <linearGradient id="beamL${s}" gradientUnits="userSpaceOnUse" x1="60" y1="0" x2="2" y2="0"><stop offset="0" stop-color="#FFF1CF" stop-opacity=".9"/><stop offset="1" stop-color="#FFF1CF" stop-opacity="0"/></linearGradient>
+  </defs>
+  <circle cx="60" cy="62" r="50" fill="#403A33" opacity=".14"/>
+  <circle cx="60" cy="60" r="50" fill="url(#sky${s})"/>
+  <g clip-path="url(#clip${s})">
+    <polygon points="62,33 118,16 118,52" fill="url(#beamR${s})"/>
+    <polygon points="58,33 2,16 2,52" fill="url(#beamL${s})"/>
+    <circle cx="60" cy="34" r="17" fill="url(#glow${s})"/>
+    <rect x="0" y="86" width="120" height="40" fill="url(#sea${s})"/>
+    <path d="M8 93 q6 -2 12 0 M30 98 q7 -2 14 0 M76 95 q6 -2 12 0 M92 101 q7 -2 14 0 M14 104 q6 -2 12 0 M58 104 q7 -2 14 0" stroke="#E6EDF3" stroke-width="1" fill="none" opacity=".75" stroke-linecap="round"/>
+    <path d="M32 90 C36 81 45 79 51 84 L69 84 C75 78 85 81 89 90Z" fill="url(#rock${s})"/>
+    <polygon points="53,42 67,42 71,86 49,86" fill="url(#tow${s})"/>
+    <polygon points="51.91,54 68.09,54 68.82,62 51.18,62" fill="url(#str${s})"/>
+    <polygon points="50.45,70 69.55,70 70.27,78 49.73,78" fill="url(#str${s})"/>
+    <rect x="58.5" y="64" width="3" height="4" rx="1" fill="#403A33" opacity=".7"/>
+    <rect x="57.5" y="79" width="5" height="7" rx="2.5" fill="#403A33" opacity=".85"/>
+    <rect x="50" y="40" width="20" height="3" rx="1" fill="#403A33"/>
+    <rect x="53.5" y="30" width="13" height="10" rx="1.5" fill="#FFF1CF" stroke="#403A33" stroke-width="1.2"/>
+    <path d="M57.8 30 V40 M62.2 30 V40" stroke="#403A33" stroke-width=".8"/>
+    <path d="M51 30 L69 30 L60 21Z" fill="url(#roof${s})"/>
+    <circle cx="60" cy="20" r="1.7" fill="url(#pin${s})"/>
+  </g>
+  <circle cx="60" cy="60" r="50" fill="none" stroke="url(#gold${s})" stroke-width="3"/>`;
+
+const POCKET = s => `<defs>${defs(s)}
+  <linearGradient id="ink${s}" x1="0" x2="1"><stop offset="0" stop-color="#6E655B"/><stop offset="1" stop-color="#2B2622"/></linearGradient>
+  <linearGradient id="blu${s}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C9D5E0"/><stop offset="1" stop-color="#7F95AA"/></linearGradient>
+  <linearGradient id="pnk${s}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F7DFD3"/><stop offset="1" stop-color="#D5A08A"/></linearGradient>
+  </defs>
+  <circle cx="60" cy="10" r="6.5" fill="none" stroke="url(#gold${s})" stroke-width="3"/>
+  <rect x="55" y="15" width="10" height="7" rx="2" fill="url(#gold${s})"/>
+  <g transform="translate(6 12) scale(.9)">
+    <circle cx="60" cy="62" r="49" fill="#403A33" opacity=".16"/>
+    <circle cx="60" cy="60" r="49" fill="url(#gold${s})"/>
+    <circle cx="60" cy="60" r="44" fill="#8A6A3A" opacity=".55"/>
+    <circle cx="60" cy="60" r="43" fill="url(#dial${s})"/>
+    ${ticks(60, 60)}
+    <g filter="url(#sh${s})">
+      <path d="M60 19 C71 33 71 49 60 60 C49 49 49 33 60 19Z" fill="url(#leafG${s})"/>
+      <path d="M60 23 L60 57" stroke="#6E7A50" stroke-width=".9" opacity=".85"/>
+      <path d="M60 32 L55.5 28 M60 38 L54 33.5 M60 44 L53.5 40 M60 32 L64.5 28 M60 38 L66 33.5 M60 44 L66.5 40" stroke="#F4F2E6" stroke-width=".6" opacity=".75" fill="none"/>
+      <path d="M60 101 L66 67 L60 60 L54 67Z" fill="url(#ink${s})"/>
+      <path d="M19 60 L52 55 L60 60 L52 65Z" fill="url(#blu${s})"/>
+      <path d="M101 60 L68 55 L60 60 L68 65Z" fill="url(#pnk${s})"/>
+    </g>
+    <circle cx="60" cy="60" r="4.6" fill="url(#pin${s})"/>
+    <ellipse cx="45" cy="37" rx="22" ry="8" transform="rotate(-32 45 37)" fill="#FFFFFF" opacity=".22"/>
+  </g>`;
+
+const COMPASS_SPROUT = s => `<defs>${defs(s)}</defs>
+  <circle cx="60" cy="62" r="49" fill="#403A33" opacity=".16"/>
+  <circle cx="60" cy="60" r="49" fill="url(#gold${s})"/>
+  <circle cx="60" cy="60" r="44" fill="#8A6A3A" opacity=".55"/>
+  <circle cx="60" cy="60" r="43" fill="url(#dial${s})"/>
+  ${ticks(60, 60)}
+  <text x="60" y="33" text-anchor="middle" font-family="Georgia, serif" font-size="8" fill="#403A33">N</text>
+  <path d="M60 30 L60 30" />
+  <ellipse cx="60" cy="80" rx="15" ry="3.6" fill="url(#soil${s})"/>
+  <ellipse cx="47" cy="88" rx="3" ry="1.6" fill="#BCA586"/><ellipse cx="53" cy="85" rx="2.6" ry="1.4" fill="#CDB89A"/>
+  <ellipse cx="42" cy="93" rx="3.4" ry="1.8" fill="#A99172"/>
+  <path d="M60 80 C60 72 60 64 60 56" stroke="#86935F" stroke-width="2.8" stroke-linecap="round" fill="none"/>
+  ${leaves(s)}
+  <ellipse cx="45" cy="37" rx="22" ry="8" transform="rotate(-32 45 37)" fill="#FFFFFF" opacity=".2"/>`;
+
+const CARD_UP = s => `<defs>${defs(s)}</defs>
+  <ellipse cx="60" cy="105" rx="27" ry="4" fill="#403A33" opacity=".15"/>
+  <rect x="34" y="18" width="52" height="84" rx="8" fill="url(#paper${s})" stroke="url(#gold${s})" stroke-width="2.5" filter="url(#shc${s})"/>
+  <rect x="39.5" y="23.5" width="41" height="73" rx="5" fill="none" stroke="url(#gold${s})" stroke-width=".8"/>
+  <circle cx="60" cy="58" r="18" fill="#A7B9C9" opacity=".25"/>
+  <ellipse cx="60" cy="86" rx="11" ry="2.8" fill="url(#soil${s})"/>
+  <path d="M60 86 C60 76 60 66 60 58" stroke="#86935F" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+  <g transform="translate(60 64) scale(.78) translate(-60 -58)">${leaves(s)}</g>
+  <path d="M75 27 L77 32 L82 33 L77 35 L75 40 L73 35 L68 33 L73 32Z" fill="url(#gold${s})"/>`;
+
+const CARD_FAN = s => `<defs>${defs(s)}
+  <linearGradient id="pk${s}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F8E6DD"/><stop offset="1" stop-color="#E6C1B0"/></linearGradient>
+  <linearGradient id="bl${s}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E6ECF1"/><stop offset="1" stop-color="#B9C8D5"/></linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" rx="32" ry="4" fill="#403A33" opacity=".14"/>
+  <rect x="38" y="30" width="44" height="68" rx="7" fill="url(#pk${s})" stroke="url(#gold${s})" stroke-width="2" transform="rotate(-18 60 104)" filter="url(#shc${s})"/>
+  <rect x="38" y="30" width="44" height="68" rx="7" fill="url(#bl${s})" stroke="url(#gold${s})" stroke-width="2" transform="rotate(18 60 104)" filter="url(#shc${s})"/>
+  <rect x="38" y="28" width="44" height="70" rx="7" fill="url(#paper${s})" stroke="url(#gold${s})" stroke-width="2.2" filter="url(#shc${s})"/>
+  <rect x="42.5" y="32.5" width="35" height="61" rx="4.5" fill="none" stroke="url(#gold${s})" stroke-width=".7"/>
+  <ellipse cx="60" cy="84" rx="9" ry="2.2" fill="url(#soil${s})"/>
+  <path d="M60 84 C60 77 60 70 60 64" stroke="#86935F" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+  <g filter="url(#sh${s})">
+    <path d="M60 68 C51 66 46 59 48 51 C57 53 61 60 60 68Z" fill="url(#leafG${s})"/>
+    <path d="M60 64 C68 60 74 54 74 47 C66 47 60 54 60 64Z" fill="url(#leafP${s})"/>
+  </g>
+  <path d="M73 36 L74.6 40 L78.6 40.8 L74.6 42.4 L73 46.4 L71.4 42.4 L67.4 40.8 L71.4 40Z" fill="url(#gold${s})"/>`;
+
+document.getElementById("lh").innerHTML = LIGHTHOUSE("_lh");
+document.getElementById("a4").innerHTML = POCKET("_a4");
+document.getElementById("a5").innerHTML = COMPASS_SPROUT("_a5");
+document.getElementById("d2").innerHTML = CARD_UP("_d2");
+document.getElementById("d3").innerHTML = CARD_FAN("_d3");
+</script>
