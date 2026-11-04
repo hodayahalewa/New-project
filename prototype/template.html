@@ -212,6 +212,15 @@ textarea { min-height: 96px; resize: vertical; }
 .switch[aria-checked="true"] { background: var(--sage-deep); }
 .switch[aria-checked="true"]::after { right: 21px; }
 
+.how { margin: 0; padding-inline-start: 20px; display: grid; gap: 8px; }
+.notif { appearance: none; border: 0; font: inherit; text-align: right; cursor: pointer; display: flex; gap: 12px; align-items: center; background: #FFFDF9; color: #403A33; border-radius: 18px; padding: 12px 14px; box-shadow: 0 10px 30px rgba(0,0,0,.22); }
+.notif.live { position: fixed; z-index: 60; left: 50%; top: calc(10px + env(safe-area-inset-top, 0px)); transform: translateX(-50%); width: min(420px, calc(100% - 24px)); animation: drop .45s ease both; }
+@keyframes drop { from { transform: translate(-50%, -30px); opacity: 0; } }
+.notif.static { cursor: default; box-shadow: 0 2px 10px rgba(64,58,51,.15); border: 1px solid #E6DCCD; }
+.notif .ni { width: 40px; height: 40px; border-radius: 10px; background: #FAF6F0; display: grid; place-items: center; flex: none; }
+.notif b { font-size: 12px; color: #7A7067; }
+.notif span { font-size: 14px; }
+
 /* summary */
 .core3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
 .core3 .vcard { cursor: default; }
@@ -249,7 +258,7 @@ const SHOP = [{ id: "bench", icon: "🪑", name: "ספסל", price: 150 }, { id:
 const KEY = "masa-haarachim-proto-v1";
 
 /* ---------- state ---------- */
-const fresh = () => ({ name: "", started: false, coins: 0, domains: {}, core: [], coreDone: false, peek: false, challenges: 0, notes: [], shop: [], asked: {}, reminders: { push: true, day: "ראשון", time: "09:00" } });
+const fresh = () => ({ name: "", started: false, coins: 0, domains: {}, core: [], coreDone: false, peek: false, challenges: 0, notes: [], shop: [], asked: {}, reminders: { push: true, mail: false, day: "ראשון", time: "09:00" }, account: null, coach: "" });
 let S = load();
 function load() { try { const s = JSON.parse(localStorage.getItem(KEY) || "null"); if (s && typeof s === "object") return Object.assign(fresh(), s); } catch (e) {} return fresh(); }
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
@@ -354,7 +363,7 @@ function sheet(html) {
 /* ---------- router ---------- */
 function go(name, arg) {
   current = name;
-  const screens = { welcome, map, intro, question, table, reveal, stamp, album, garden, lighthouse: lighthouseScreen, challenge, summary };
+  const screens = { welcome, account, map, intro, question, table, reveal, stamp, album, garden, lighthouse: lighthouseScreen, challenge, summary };
   (screens[name] || map)(arg);
 }
 
@@ -369,7 +378,32 @@ function welcome() {
     <button class="btn" type="button" id="go">יוצאים לדרך</button>
     <p class="small muted">כל תשובה נשמרת. אפשר לעצור בכל רגע ולהמשיך אחר כך.</p>
   </section>`);
-  document.getElementById("go").onclick = () => { S.name = document.getElementById("nm").value.trim(); S.started = true; save(); go("map"); };
+  document.getElementById("go").onclick = () => { S.name = document.getElementById("nm").value.trim(); save(); go("account"); };
+}
+
+/* ---------- account (login sketch) ---------- */
+function account() {
+  const tag = '<span class="sketch-tag">סקיצה</span>';
+  render(`<div class="topbar"><button class="iconbtn" type="button" id="back" aria-label="חזרה">→</button><span></span></div>
+    <div class="hero-card">${compassLogo(90)}<h2>שומרים את המסע</h2>
+      <p class="muted">מתחברים פעם אחת. כך אפשר להמשיך מכל טלפון, האתגר השבועי מגיע בזמן, והמאמן רואה את ההתקדמות.</p></div>
+    <button class="btn ghost" type="button" id="google">המשך עם Google ${tag}</button>
+    <div class="panel" id="mailbox"><div class="field"><label for="em">או כניסה עם מייל</label><input id="em" type="email" inputmode="email" placeholder="name@example.com" autocomplete="email"></div>
+      <button class="btn" type="button" id="mail">שליחת לינק כניסה למייל</button>
+      <p class="small muted">בלי סיסמה: מגיע למייל לינק, לוחצים עליו ונכנסים.</p></div>
+    <div class="field"><label for="cc">קוד הצטרפות מהמאמן (לא חובה)</label><input id="cc" placeholder="לדוגמה: MASA-24" value="${esc(S.coach)}"></div>
+    <button class="link" type="button" id="skip">להמשיך בלי חשבון <span class="sketch-tag">רק בסקיצה</span></button>`);
+  const done = (acc) => { S.account = acc; S.coach = document.getElementById("cc").value.trim(); S.started = true; save(); go("map"); };
+  document.getElementById("back").onclick = () => { S.started = false; save(); welcome(); };
+  document.getElementById("google").onclick = () => { toast("בגרסה המלאה ייפתח כאן חלון ההתחברות של Google"); setTimeout(() => done({ type: "google" }), 900); };
+  document.getElementById("mail").onclick = () => {
+    const em = document.getElementById("em").value.trim();
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) return toast("צריך לכתוב כתובת מייל מלאה, למשל name@example.com");
+    S.coach = document.getElementById("cc").value.trim();
+    document.getElementById("mailbox").innerHTML = `<h3>הלינק נשלח</h3><p>נשלח לינק כניסה אל <b dir="ltr">${esc(em)}</b>. בגרסה המלאה לוחצים עליו מתוך המייל.</p><button class="btn" type="button" id="cont">להמשיך <span class="sketch-tag">בסקיצה</span></button>`;
+    document.getElementById("cont").onclick = () => done({ type: "email", email: em });
+  };
+  document.getElementById("skip").onclick = () => done({ type: "none" });
 }
 
 /* ---------- map ---------- */
@@ -531,9 +565,17 @@ function reveal({ id, again }) {
     ${st.tensions.length ? `<div class="panel"><h3>ההכרעות שלך</h3>${st.tensions.map(t => `<div class="tension"><b>${t.tension}</b><span>בחרת: ${t.choice}</span></div>`).join("")}</div>` : ""}
     ${again ? `<div class="panel"><h3>הרפלקציה שלך</h3><p class="${st.reflection ? "" : "muted"}">${st.reflection ? esc(st.reflection) : "לא נכתבה רפלקציה."}</p></div>
        <button class="btn ghost" type="button" id="redo">לעבור את התחנה מחדש</button>`
-      : `<div class="panel"><h3>שאלה לרפלקציה</h3><p>${rq}</p><label class="small muted" for="rf">אפשר לכתוב משפט או שניים, או לדלג</label><textarea id="rf" placeholder="מה עולה לך?"></textarea>
+      : `<div class="panel"><h3>רגע לחשוב</h3>
+       <p class="small muted">שאלה קטנה על אחד הקלפים שבחרת. אין תשובה נכונה ואין צורך לכתוב הרבה. מה שנכתב נשמר בפנקס, ואפשר להביא אותו לפגישת האימון.</p>
+       <div class="tension" id="rq" aria-live="polite"></div>
+       <button class="link" type="button" id="other" style="justify-self:start">שאלה על קלף אחר</button>
+       <label class="small muted" for="rf">התשובה שלך, במשפט או שניים</label><textarea id="rf" placeholder="רגע, אדם או מקום שעולים לך..."></textarea>
        <button class="btn" type="button" id="save">לסיים את התחנה</button><button class="link" type="button" id="skip">לדלג על השאלה</button></div>`}`);
   if (!again) app.querySelectorAll(".flip").forEach((f, i) => setTimeout(() => f.classList.add("on"), 450 + i * 550));
+  let rIdx = 0;
+  const setQ = () => { const v = st.chosen[rIdx % st.chosen.length], el = document.getElementById("rq"); st.reflectValue = v; if (el) el.innerHTML = `<b>${V[v].icon} על הקלף "${v}"</b><span>${V[v].reflect}</span>`; };
+  if (!again) setQ();
+  document.getElementById("other")?.addEventListener("click", () => { rIdx++; setQ(); });
   const finish = text => { st.reflection = text; st.done = true; st.run = null; if (text) addCoins(20); save(); go("stamp", id); };
   document.getElementById("save")?.addEventListener("click", () => finish(document.getElementById("rf").value.trim()));
   document.getElementById("skip")?.addEventListener("click", () => finish(""));
@@ -625,6 +667,22 @@ function challengeValue() {
   const pool = S.core.length ? S.core : doneDomains().flatMap(d => S.domains[d.id].chosen);
   return pool.length ? pool[S.challenges % pool.length] : null;
 }
+const DAYS = ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"];
+function nextReminder(r) {
+  const now = new Date(), [h, m] = r.time.split(":").map(Number), d = new Date(now);
+  d.setHours(h || 0, m || 0, 0, 0);
+  let add = (DAYS.indexOf(r.day) - now.getDay() + 7) % 7;
+  if (add === 0 && d <= now) add = 7;
+  d.setDate(d.getDate() + add);
+  return `יום ${DAYS[d.getDay()]}, ${d.getDate()}.${d.getMonth() + 1}, בשעה ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+}
+const notifHTML = v => `<span class="ni">${compassLogo(34)}</span><span style="display:grid;gap:1px;min-width:0"><b>מסע הערכים · עכשיו</b><span>האתגר השבועי שלך (${v}): ${V[v].challenge}</span></span>`;
+function notify(v) {
+  document.querySelector(".notif.live")?.remove();
+  const n = document.createElement("button"); n.type = "button"; n.className = "notif live"; n.innerHTML = notifHTML(v);
+  n.onclick = () => { n.remove(); go("challenge"); toast("ההתראה פתחה את מסך האתגר"); };
+  document.body.appendChild(n); setTimeout(() => n.remove(), 6000);
+}
 function challenge() {
   const v = challengeValue();
   if (!v) {
@@ -632,27 +690,45 @@ function challenge() {
     document.getElementById("m").onclick = () => go("map"); return;
   }
   const r = S.reminders;
+  const pool = S.core.length ? S.core : doneDomains().flatMap(d => S.domains[d.id].chosen);
+  const nv = pool[(S.challenges + 1) % pool.length];
+  const where = S.account?.type === "email" ? `ולמייל ${esc(S.account.email)}` : "";
   render(`${topbar()}<span class="eyebrow">האתגר של השבוע · מס' ${S.challenges + 1}</span>
     <div class="challenge"><div class="row" style="display:flex;gap:8px;align-items:center"><span style="font-size:26px">${V[v].icon}</span><b>${v}</b></div>
       <p class="task">${V[v].challenge}</p>
       <p class="small muted">כל ערך צריך להתממש גם בעולם. אחרי שעשית, מסמנים ✓ ומקבלים 100 מטבעות, והפרח של הערך גדל בגן.</p>
       <label class="small muted" for="cn">איך זה הרגיש? (לא חובה)</label><textarea id="cn" style="min-height:70px"></textarea>
       <button class="btn gold" type="button" id="done">✓ עשיתי</button></div>
-    <div class="panel"><h3>תזכורת שבועית</h3>
-      <div class="toggle"><span>התראה בטלפון</span><button class="switch" type="button" role="switch" id="push" aria-checked="${r.push}" aria-label="התראה בטלפון"></button></div>
-      <div class="reminder"><div class="field"><label for="day">יום</label><select id="day">${["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"].map(x => `<option ${x === r.day ? "selected" : ""}>${x}</option>`).join("")}</select></div>
+    <div class="panel"><h3>איך האתגר מגיע?</h3>
+      <ol class="how">
+        <li><b>מה האתגר:</b> בכל שבוע נבחר אחד משלושת ערכי הליבה, כל פעם ערך אחר, ומגיע איתו אתגר קטן שמממש אותו.</li>
+        <li><b>מתי:</b> ביום ובשעה שבחרת כאן למטה מגיעה התראה לטלפון${where ? ` ${where}` : ""}.</li>
+        <li><b>מה עושים:</b> לוחצים על ההתראה, נפתח המסך הזה, ואחרי שעשית מסמנים ✓.</li>
+        <li><b>תזכורת עדינה:</b> מי שעוד לא סימן מקבל תזכורת נוספת באמצע השבוע.</li>
+      </ol></div>
+    <div class="panel"><h3>התזכורת שלך</h3>
+      <div class="reminder"><div class="field"><label for="day">יום</label><select id="day">${DAYS.map(x => `<option ${x === r.day ? "selected" : ""}>${x}</option>`).join("")}</select></div>
         <div class="field"><label for="tm">שעה</label><input id="tm" type="time" value="${r.time}"></div></div>
+      <div class="tension"><b>התזכורת הבאה</b><span id="nextr">${nextReminder(r)}</span></div>
+      <div class="tension"><b>האתגר של השבוע הבא</b><span>${V[nv].icon} ${nv}: ${V[nv].challenge}</span></div>
+      <div class="toggle"><span>התראה בטלפון</span><button class="switch" type="button" role="switch" id="push" aria-checked="${r.push}" aria-label="התראה בטלפון"></button></div>
+      <div class="toggle"><span>גם במייל${S.account?.type === "email" ? "" : ' <span class="small muted">(אחרי כניסה עם מייל)</span>'}</span><button class="switch" type="button" role="switch" id="mailsw" aria-checked="${r.mail}" aria-label="תזכורת גם במייל"></button></div>
+      <p class="small muted">כך תיראה ההתראה בטלפון:</p>
+      <div class="notif static" aria-hidden="true">${notifHTML(v)}</div>
+      <button class="btn ghost" type="button" id="test">לקבל התראה לדוגמה עכשיו</button>
       <button class="btn ghost" type="button" id="cal">הוספת תזכורת קבועה ליומן <span class="sketch-tag">סקיצה</span></button></div>`, { nav: true });
   document.getElementById("done").onclick = () => {
     const note = document.getElementById("cn").value.trim();
     S.notes.push({ v, task: V[v].challenge, note }); S.challenges++; save(); addCoins(100);
     toast(`כל הכבוד! הערך "${v}" צמח בגן`); setTimeout(() => go("garden"), 700);
   };
-  const p = document.getElementById("push");
-  p.onclick = () => { r.push = !r.push; p.setAttribute("aria-checked", r.push); save(); };
-  document.getElementById("day").onchange = e => { r.day = e.target.value; save(); };
-  document.getElementById("tm").onchange = e => { r.time = e.target.value; save(); };
-  document.getElementById("cal").onclick = () => toast(`בגרסה המלאה ייווצר אירוע ביומן: כל יום ${r.day} ב־${r.time}`);
+  const sw = (id, key) => { const b = document.getElementById(id); b.onclick = () => { r[key] = !r[key]; b.setAttribute("aria-checked", r[key]); save(); }; };
+  sw("push", "push"); sw("mailsw", "mail");
+  const upd = () => { document.getElementById("nextr").textContent = nextReminder(r); };
+  document.getElementById("day").onchange = e => { r.day = e.target.value; save(); upd(); };
+  document.getElementById("tm").onchange = e => { r.time = e.target.value; save(); upd(); };
+  document.getElementById("test").onclick = () => notify(v);
+  document.getElementById("cal").onclick = () => toast(`בגרסה המלאה ייווצר אירוע קבוע ביומן: כל יום ${r.day} בשעה ${r.time}`);
 }
 
 /* ---------- garden ---------- */
@@ -736,7 +812,7 @@ function summary() {
     <div class="panel"><h3>הערכים לפי תחום</h3>${dd.length ? dd.map(d => `<div class="drow"><span>${d.icon} ${d.name}</span><span class="vals">${S.domains[d.id].chosen.join(" · ")}</span></div>`).join("")
       : `<div class="empty"><p>עוד לא הושלמה תחנה.</p><button class="btn small" type="button" id="m">למפה</button></div>`}</div>
     ${repeat.length ? `<div class="panel"><h3>ערכים שחוזרים</h3>${repeat.map(([v, n]) => `<p>${V[v].icon} <b>${v}</b> הופיע ב־${n} תחומים</p>`).join("")}</div>` : ""}
-    ${dd.some(d => S.domains[d.id].reflection) ? `<div class="panel"><h3>הרפלקציות שלי</h3>${dd.filter(d => S.domains[d.id].reflection).map(d => `<div class="tension"><b>${d.name}</b><span>${esc(S.domains[d.id].reflection)}</span></div>`).join("")}</div>` : ""}
+    ${dd.some(d => S.domains[d.id].reflection) ? `<div class="panel"><h3>הרפלקציות שלי</h3>${dd.filter(d => S.domains[d.id].reflection).map(d => `<div class="tension"><b>${d.name}${S.domains[d.id].reflectValue ? ` · ${S.domains[d.id].reflectValue}` : ""}</b><span>${esc(S.domains[d.id].reflection)}</span></div>`).join("")}</div>` : ""}
     <div class="panel"><h3>אתגרים</h3><p>${S.challenges ? `בוצעו ${S.challenges} אתגרים` : "עוד לא בוצע אתגר"}</p>${S.notes.slice(-3).map(n => `<div class="tension"><b>✓ ${n.v}</b><span>${n.task}${n.note ? ` · "${esc(n.note)}"` : ""}</span></div>`).join("")}</div>
     <button class="btn" type="button" id="copy">העתקת סיכום לשליחה למאמן</button>
     <pre id="ct" class="small" hidden style="white-space:pre-wrap;background:var(--paper);padding:12px;border-radius:12px;user-select:all">${esc(coachText())}</pre>
