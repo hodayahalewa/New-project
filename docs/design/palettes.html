@@ -1,0 +1,265 @@
+<title>פלטות מסע הערכים</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&family=Assistant:wght@400;600;700&display=swap">
+<style>
+/* Layout: a quiet gallery. Numbered palette cards in a responsive grid, then a logo strip that wears the selected palette. */
+:root {
+  --bg: #F4F4F0;
+  --surface: #FFFFFF;
+  --fg: #22302C;
+  --muted: #69736F;
+  --line: #E1E2DC;
+  --accent: #A88A4E;
+  --focus: #5E7F75;
+  --font-display: "Frank Ruhl Libre", "David Libre", Georgia, serif;
+  --font-body: "Assistant", "Heebo", "Segoe UI", Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #151918; --surface: #1E2422; --fg: #ECEDE7; --muted: #A1AAA5;
+    --line: #2F3734; --accent: #D2B57C; --focus: #9CC2B5; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #151918; --surface: #1E2422; --fg: #ECEDE7; --muted: #A1AAA5;
+  --line: #2F3734; --accent: #D2B57C; --focus: #9CC2B5; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { background: var(--bg); }
+body {
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  direction: rtl;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 32px 120px;
+}
+.wrap { max-width: 1120px; margin: 0 auto; display: grid; gap: 48px; }
+header { display: grid; gap: 8px; }
+.eyebrow { font-size: 13px; letter-spacing: .08em; color: var(--accent); font-weight: 700; }
+h1 { font-family: var(--font-display); font-weight: 500; font-size: clamp(32px, 6vw, 48px); line-height: 1.15; margin: 0; text-wrap: balance; }
+h2 { font-family: var(--font-display); font-weight: 500; font-size: 28px; margin: 0; text-wrap: balance; }
+.lead { color: var(--muted); max-width: 60ch; margin: 0; }
+section { display: grid; gap: 20px; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr)); gap: 20px; }
+
+.pal {
+  appearance: none; font: inherit; color: inherit; text-align: right;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+  padding: 18px; display: grid; gap: 14px; cursor: pointer; min-width: 0;
+  transition: border-color .2s, box-shadow .2s;
+}
+.pal:hover { border-color: var(--muted); }
+.pal:focus-visible, .logo:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+.pal[aria-pressed="true"] { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
+.pal-head { display: flex; align-items: baseline; gap: 12px; }
+.num { font-family: var(--font-display); font-size: 40px; line-height: 1; color: var(--accent); font-variant-numeric: tabular-nums; }
+.pal-name { font-family: var(--font-display); font-size: 22px; font-weight: 500; }
+.pal-mood { color: var(--muted); font-size: 14px; }
+.check { margin-inline-start: auto; font-size: 13px; font-weight: 700; color: var(--accent); visibility: hidden; }
+.pal[aria-pressed="true"] .check { visibility: visible; }
+
+.swatches { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.sw { border-radius: 10px; padding: 10px 10px 8px; min-height: 76px; display: grid; align-content: end; gap: 0; border: 1px solid rgba(0,0,0,.06); }
+.sw b { font-size: 13px; font-weight: 700; }
+.sw span { font-size: 11px; font-variant-numeric: tabular-nums; direction: ltr; text-align: right; opacity: .85; }
+
+/* Mini app preview inside each palette, painted only with that palette's colors */
+.preview { border-radius: 12px; padding: 14px; display: grid; gap: 10px; }
+.pv-top { display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+.pv-coins { padding: 2px 10px; border-radius: 99px; font-weight: 700; }
+.pv-card { border-radius: 12px; padding: 12px 14px; display: grid; gap: 2px; }
+.pv-card strong { font-family: var(--font-display); font-size: 20px; font-weight: 500; }
+.pv-card small { font-size: 13px; }
+.pv-row { display: flex; gap: 8px; }
+.pv-chip { flex: 1; border-radius: 10px; padding: 8px; font-size: 13px; text-align: center; font-weight: 600; }
+.pv-btn { border-radius: 99px; padding: 9px; text-align: center; font-weight: 700; font-size: 14px; }
+
+/* Logos */
+.logos { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); gap: 20px; }
+.logo {
+  appearance: none; font: inherit; color: inherit; cursor: pointer; text-align: center;
+  border: 1px solid var(--line); border-radius: 14px; padding: 20px 16px 16px;
+  display: grid; gap: 10px; justify-items: center; background: var(--c-bg);
+  transition: box-shadow .2s, border-color .2s;
+}
+.logo[aria-pressed="true"] { border-color: var(--c-gold); box-shadow: 0 0 0 2px var(--c-gold); }
+.logo svg { width: 120px; height: 120px; max-width: 100%; }
+.wordmark { font-family: var(--font-display); font-size: 24px; font-weight: 500; color: var(--c-ink); line-height: 1.1; }
+.logo-label { font-size: 13px; color: var(--c-ink); opacity: .75; }
+.logo-letter { font-family: var(--font-display); font-size: 18px; color: var(--c-gold); font-weight: 700; }
+
+/* Sticky choice bar */
+.bar {
+  position: fixed; inset: auto 0 0 0; z-index: 5;
+  background: var(--surface); border-top: 1px solid var(--line);
+  padding-block: 12px calc(12px + env(safe-area-inset-bottom, 0px));
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.bar-in { max-width: 1120px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+.bar-text { font-weight: 600; min-width: 0; }
+.bar-text output { color: var(--accent); }
+.copy {
+  font: inherit; font-weight: 700; border: 0; border-radius: 99px; padding: 10px 20px; cursor: pointer;
+  background: var(--fg); color: var(--bg);
+}
+.copy:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">מסע הערכים · שלב 1 · עיצוב</div>
+    <h1>בחירת פלטה ולוגו</h1>
+    <p class="lead">שש פלטות בפסטל עדין של ירוק, ורוד ותכלת. בכל פלטה יש גם צבע עמוק לטקסט וגוון זהב שנותן תחושה יוקרתית. לכל צבע יש מספר, כדי שיהיה קל להחליף צבע בודד. לחיצה על פלטה צובעת בה את הלוגואים שבהמשך.</p>
+  </header>
+
+  <section aria-labelledby="h-pal">
+    <h2 id="h-pal">פלטות צבעים</h2>
+    <div class="grid" id="palettes"></div>
+  </section>
+
+  <section aria-labelledby="h-logo" id="logo-section">
+    <h2 id="h-logo">לוגו</h2>
+    <p class="lead">ארבעה כיוונים ראשונים. אחרי הבחירה אלטש את הלוגו שנבחר ואכין גרסאות לאייקון של האפליקציה.</p>
+    <div class="logos" id="logos"></div>
+  </section>
+</div>
+
+<div class="bar">
+  <div class="bar-in">
+    <div class="bar-text">הבחירה: <output id="choice">פלטה 1 · לוגו א</output></div>
+    <button class="copy" id="copy" type="button">העתקת הבחירה</button>
+  </div>
+</div>
+
+<script>
+const PALETTES = [
+  { name: "מרווה ואבקה", mood: "רך, חם ומאוזן", c: { bg: "#F7F4EF", green: "#A8BFA3", pink: "#E8C4C4", blue: "#B9CFDF", ink: "#2F3E3A", gold: "#C2A36B" } },
+  { name: "ערפל בוקר", mood: "נקי, שקט ומרווח", c: { bg: "#F5F7F6", green: "#9DB8AE", pink: "#EBCFCB", blue: "#A9BCD0", ink: "#283845", gold: "#D4BC8E" } },
+  { name: "גן ורדים", mood: "רומנטי ועוטף", c: { bg: "#FBF6F4", green: "#B7D3C2", pink: "#E3B5BC", blue: "#B8C0E0", ink: "#3B2F3A", gold: "#C99A86" } },
+  { name: "ים ושקדייה", mood: "רענן ומואר", c: { bg: "#F6F8F9", green: "#A7CFC6", pink: "#F0D3D3", blue: "#BBD6EA", ink: "#1F3B4D", gold: "#CBB27C" } },
+  { name: "לבנדר ומרווה", mood: "מרגיע ורוחני", c: { bg: "#F7F5F8", green: "#B3C4AE", pink: "#DCC6DE", blue: "#C2D3DE", ink: "#3A3550", gold: "#B89B5E" } },
+  { name: "חול ופסטל", mood: "אדמתי ויוקרתי", c: { bg: "#FAF6F0", green: "#BFC8A4", pink: "#EFC9B8", blue: "#A7B9C9", ink: "#403A33", gold: "#B8935A" } }
+];
+const ROLES = [["bg","רקע"],["green","ירוק"],["pink","ורוד"],["blue","כחול"],["ink","טקסט עמוק"],["gold","זהב"]];
+
+const LOGOS = [
+  { id: "א", name: "מצפן ועלה", note: "מסע עם כיוון, וצמיחה בצפון", svg: `
+    <circle cx="60" cy="60" r="46" fill="none" stroke="var(--c-gold)" stroke-width="2.5"/>
+    <circle cx="60" cy="60" r="38" fill="none" stroke="var(--c-ink)" stroke-width="1" opacity=".25"/>
+    <path d="M60 18 C72 34 72 50 60 60 C48 50 48 34 60 18Z" fill="var(--c-green)"/>
+    <path d="M60 24 L60 56" stroke="var(--c-bg)" stroke-width="1.4" fill="none"/>
+    <path d="M60 100 L66 68 L60 60 L54 68Z" fill="var(--c-ink)"/>
+    <path d="M20 60 L52 55 L60 60 L52 65Z" fill="var(--c-blue)"/>
+    <path d="M100 60 L68 55 L60 60 L68 65Z" fill="var(--c-pink)"/>
+    <circle cx="60" cy="60" r="3.5" fill="var(--c-gold)"/>` },
+  { id: "ב", name: "המגדלור", note: "התחנה שבה מגלים את ערכי הליבה", svg: `
+    <polygon points="68,32 106,20 106,46" fill="var(--c-gold)" opacity=".35"/>
+    <polygon points="52,32 14,20 14,46" fill="var(--c-gold)" opacity=".35"/>
+    <polygon points="50,30 70,30 60,21" fill="var(--c-ink)"/>
+    <rect x="52" y="30" width="16" height="10" rx="2" fill="var(--c-gold)"/>
+    <polygon points="54,40 66,40 70,86 50,86" fill="var(--c-pink)"/>
+    <polygon points="53.1,56 66.9,56 67.4,62 52.6,62" fill="var(--c-bg)"/>
+    <polygon points="51.7,72 68.3,72 68.8,78 51.2,78" fill="var(--c-bg)"/>
+    <path d="M14 92 q11 -7 22 0 t22 0 t22 0 t22 0 t22 0" fill="none" stroke="var(--c-blue)" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M24 102 q9 -5 18 0 t18 0 t18 0 t18 0" fill="none" stroke="var(--c-green)" stroke-width="3" stroke-linecap="round"/>` },
+  { id: "ג", name: "שביל שצומח", note: "דרך מתפתלת שהופכת לנבט", svg: `
+    <path d="M42 104 C40 86 80 82 74 64 C70 52 56 54 60 42" fill="none" stroke="var(--c-blue)" stroke-width="6" stroke-linecap="round"/>
+    <path d="M42 104 C40 86 80 82 74 64 C70 52 56 54 60 42" fill="none" stroke="var(--c-bg)" stroke-width="1.5" stroke-dasharray="2 6" stroke-linecap="round"/>
+    <path d="M60 42 C47 40 41 30 43 20 C54 22 61 30 60 42Z" fill="var(--c-green)"/>
+    <path d="M60 42 C70 35 81 35 86 26 C75 21 64 28 60 42Z" fill="var(--c-pink)"/>
+    <circle cx="42" cy="104" r="5" fill="var(--c-gold)"/>` },
+  { id: "ד", name: "קלף ונבט", note: "קלפי הערכים, ומה שצומח מהם", svg: `
+    <g transform="rotate(-8 60 60)">
+      <rect x="32" y="22" width="56" height="76" rx="9" fill="var(--c-blue)" stroke="var(--c-gold)" stroke-width="2"/>
+      <rect x="38" y="28" width="44" height="64" rx="6" fill="none" stroke="var(--c-bg)" stroke-width="1" opacity=".8"/>
+      <path d="M60 82 L60 56" stroke="var(--c-ink)" stroke-width="3" stroke-linecap="round"/>
+      <path d="M60 62 C49 60 45 51 47 44 C56 46 60 53 60 62Z" fill="var(--c-green)"/>
+      <path d="M60 57 C69 53 75 46 75 39 C66 39 60 46 60 57Z" fill="var(--c-pink)"/>
+      <path d="M77 30 L79 35 L84 36 L79 38 L77 43 L75 38 L70 36 L75 35Z" fill="var(--c-gold)"/>
+    </g>` }
+];
+
+let selPal = 0, selLogo = 0;
+
+function readSaved() {
+  try {
+    const s = JSON.parse(localStorage.getItem("masa-choice") || "null");
+    if (s && Number.isInteger(s.p) && s.p >= 0 && s.p < PALETTES.length) selPal = s.p;
+    if (s && Number.isInteger(s.l) && s.l >= 0 && s.l < LOGOS.length) selLogo = s.l;
+  } catch (e) {}
+}
+function save() {
+  try { localStorage.setItem("masa-choice", JSON.stringify({ p: selPal, l: selLogo })); } catch (e) {}
+}
+
+function renderPalettes() {
+  const root = document.getElementById("palettes");
+  root.innerHTML = PALETTES.map((p, i) => {
+    const c = p.c, n = i + 1;
+    const sw = ROLES.map(([k, label], j) => {
+      const txt = k === "ink" ? c.bg : c.ink;
+      return `<div class="sw" style="background:${c[k]};color:${txt}"><b>${n}.${j + 1} ${label}</b><span>${c[k]}</span></div>`;
+    }).join("");
+    return `<button type="button" class="pal" data-i="${i}" aria-pressed="${i === selPal}">
+      <div class="pal-head"><span class="num">${n}</span><span><div class="pal-name">${p.name}</div><div class="pal-mood">${p.mood}</div></span><span class="check">נבחרה</span></div>
+      <div class="swatches">${sw}</div>
+      <div class="preview" style="background:${c.bg};color:${c.ink};border:1px solid ${c.blue}">
+        <div class="pv-top"><span>כפר השורשים · שלב 2</span><span class="pv-coins" style="background:${c.gold};color:${c.bg}">120 מטבעות</span></div>
+        <div class="pv-card" style="background:${c.pink}"><strong>חופש</strong><small>לחיות לפי הבחירות שלי, בלי כבלים מיותרים</small></div>
+        <div class="pv-row"><span class="pv-chip" style="background:${c.green}">זה</span><span class="pv-chip" style="background:${c.blue}">או זה</span></div>
+        <div class="pv-btn" style="background:${c.ink};color:${c.bg}">להמשיך במסע</div>
+      </div>
+    </button>`;
+  }).join("");
+  root.querySelectorAll(".pal").forEach(b => b.addEventListener("click", () => {
+    selPal = +b.dataset.i; save(); renderPalettes(); applyLogoColors(); updateChoice();
+  }));
+}
+
+function applyLogoColors() {
+  const c = PALETTES[selPal].c, s = document.getElementById("logo-section").style;
+  Object.entries(c).forEach(([k, v]) => s.setProperty("--c-" + k, v));
+}
+
+function renderLogos() {
+  const root = document.getElementById("logos");
+  root.innerHTML = LOGOS.map((l, i) => `
+    <button type="button" class="logo" data-i="${i}" aria-pressed="${i === selLogo}" aria-label="לוגו ${l.id}: ${l.name}">
+      <span class="logo-letter">${l.id}</span>
+      <svg viewBox="0 0 120 120" aria-hidden="true">${l.svg}</svg>
+      <span class="wordmark">מסע הערכים</span>
+      <span class="logo-label">${l.name} · ${l.note}</span>
+    </button>`).join("");
+  root.querySelectorAll(".logo").forEach(b => b.addEventListener("click", () => {
+    selLogo = +b.dataset.i; save(); renderLogos(); updateChoice();
+  }));
+}
+
+function choiceText() { return `פלטה ${selPal + 1} (${PALETTES[selPal].name}) · לוגו ${LOGOS[selLogo].id} (${LOGOS[selLogo].name})`; }
+function updateChoice() { document.getElementById("choice").textContent = choiceText(); }
+
+document.getElementById("copy").addEventListener("click", () => {
+  const btn = document.getElementById("copy"), text = choiceText();
+  const done = () => { btn.textContent = "הועתק"; setTimeout(() => btn.textContent = "העתקת הבחירה", 1800); };
+  const fallback = () => {
+    const r = document.createRange(); r.selectNodeContents(document.getElementById("choice"));
+    const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
+    btn.textContent = "הטקסט סומן, אפשר להעתיק";
+  };
+  try { navigator.clipboard.writeText(text).then(done, fallback); } catch (e) { fallback(); }
+});
+
+readSaved();
+renderPalettes();
+applyLogoColors();
+renderLogos();
+updateChoice();
+</script>
