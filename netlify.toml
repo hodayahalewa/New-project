@@ -1,0 +1,3 @@
+# Netlify: publish the built app page. Rebuild locally with `python3 prototype/build.py`.
+[build]
+  publish = "site"

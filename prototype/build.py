@@ -101,6 +101,16 @@ def main():
     html = html.replace("__SPROUT__", data_uri(DOCS / "design/img/sprout-cutout.png", "image/png"))
     html = html.replace("__PATHIMG__", data_uri(DOCS / "design/img/path.jpg", "image/jpeg"))
     (OUT / "index.html").write_text(html, encoding="utf-8")
+    # Standalone copy for hosting (Netlify): same page wrapped in a full HTML document.
+    site = ROOT / "site"
+    site.mkdir(exist_ok=True)
+    head = ('<!doctype html>\n<html lang="he" dir="rtl">\n<head>\n<meta charset="utf-8">\n'
+            '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n'
+            '<meta name="theme-color" content="#FAF6F0">\n')
+    title_end = html.index("</title>") + len("</title>")
+    page = head + html[:title_end] + "\n" + html[title_end:].split("<div class=\"app\"", 1)[0] \
+        + "</head>\n<body>\n<div class=\"app\"" + html[title_end:].split("<div class=\"app\"", 1)[1] + "\n</body>\n</html>\n"
+    (site / "index.html").write_text(page, encoding="utf-8")
     print(f"values={len(values)} domains={len(domains)} "
           f"questions={sum(len(d['s1']) + len(d['s2']) + len(d['s3']) for d in domains)} "
           f"size={len(html) // 1024}KB")
