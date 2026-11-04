@@ -10,6 +10,11 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+
+# Supabase project. The publishable key is meant to ship inside the app; access is limited by
+# row-level security (see supabase/schema.sql). Never put the secret / service_role key here.
+SUPABASE = {"url": "https://jilxleducctilebsvtlp.supabase.co", "key": "sb_publishable__4oLgDJ2EcgQIrXKABLs9w_HZtZJCs6"}
+SUPABASE_JS = "vendor/supabase-2.118.0.js"
 DOCS = ROOT / "docs"
 OUT = ROOT / "prototype"
 
@@ -100,7 +105,10 @@ def main():
     html = html.replace("__LEAF__", data_uri(DOCS / "design/img/leaf-cutout.png", "image/png"))
     html = html.replace("__SPROUT__", data_uri(DOCS / "design/img/sprout-cutout.png", "image/png"))
     html = html.replace("__PATHIMG__", data_uri(DOCS / "design/img/path.jpg", "image/jpeg"))
-    (OUT / "index.html").write_text(html, encoding="utf-8")
+    # Artifact preview: works offline, no cloud.
+    (OUT / "index.html").write_text(html.replace("__SUPABASE_SCRIPT__", "").replace("__CLOUD__", "null"), encoding="utf-8")
+    # Hosted site: real login and cloud save.
+    html = html.replace("__SUPABASE_SCRIPT__", f'<script src="{SUPABASE_JS}"></script>\n').replace("__CLOUD__", json.dumps(SUPABASE))
     # Standalone copy for hosting (Netlify): same page wrapped in a full HTML document.
     site = ROOT / "site"
     site.mkdir(exist_ok=True)

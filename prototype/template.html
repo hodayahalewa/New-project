@@ -243,7 +243,8 @@ textarea { min-height: 96px; resize: vertical; }
 
 <div class="app" id="app"></div>
 
-<script>
+__SUPABASE_SCRIPT__<script>
+const CLOUD = __CLOUD__;
 const DATA = __DATA__;
 const LEAF = "__LEAF__";
 const SPROUT = "__SPROUT__";
@@ -258,10 +259,40 @@ const SHOP = [{ id: "bench", icon: "🪑", name: "ספסל", price: 150 }, { id:
 const KEY = "masa-haarachim-proto-v1";
 
 /* ---------- state ---------- */
-const fresh = () => ({ name: "", started: false, coins: 0, domains: {}, core: [], coreDone: false, peek: false, challenges: 0, notes: [], shop: [], asked: {}, reminders: { push: true, mail: false, day: "ראשון", time: "09:00" }, account: null, coach: "" });
+const uuid = () => (crypto.randomUUID ? crypto.randomUUID() : "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c => (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)));
+const fresh = () => ({ journeyId: uuid(), updatedAt: 0, name: "", started: false, coins: 0, domains: {}, core: [], coreDone: false, peek: false, challenges: 0, notes: [], shop: [], asked: {}, reminders: { push: true, mail: false, day: "ראשון", time: "09:00" }, account: null, coach: "" });
 let S = load();
 function load() { try { const s = JSON.parse(localStorage.getItem(KEY) || "null"); if (s && typeof s === "object") return Object.assign(fresh(), s); } catch (e) {} return fresh(); }
-function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+function saveLocal() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+function save() { S.updatedAt = Date.now(); saveLocal(); queueSync(); }
+
+/* ---------- cloud (Supabase) ---------- */
+let sb = null, user = null, syncTimer = null;
+if (CLOUD && window.supabase) { try { sb = window.supabase.createClient(CLOUD.url, CLOUD.key); } catch (e) { sb = null; } }
+function queueSync() {
+  if (!sb || !user) return;
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(pushJourney, 900);
+}
+async function pushJourney() {
+  if (!sb || !user) return;
+  S.journeyId ||= uuid();
+  const { error } = await sb.from("journeys").upsert({ id: S.journeyId, user_id: user.id, state: S, active: true, updated_at: new Date().toISOString() });
+  if (error) console.warn("sync failed", error.message);
+}
+async function pullJourney() {
+  const { data, error } = await sb.from("journeys").select("id,state").eq("user_id", user.id).eq("active", true).order("updated_at", { ascending: false }).limit(1);
+  if (error) { toast("לא הצלחנו לטעון את המסע מהענן. ההתקדמות נשמרת בטלפון בינתיים"); return; }
+  const remote = data && data[0] ? data[0].state : null;
+  if (remote && (!S.started || (remote.updatedAt || 0) > (S.updatedAt || 0))) { S = Object.assign(fresh(), remote, { journeyId: data[0].id }); saveLocal(); }
+  else { await pushJourney(); }
+  await sb.from("profiles").upsert({ id: user.id, name: S.name || null, coach_code: S.coach || null });
+}
+async function onSignedIn(u) {
+  user = u;
+  await pullJourney();
+  S.account = { type: "email", email: u.email }; S.started = true; save();
+}
 const dom = id => (S.domains[id] ||= { scores: {}, why: {}, tensions: [], chosen: [], reflection: "", done: false, run: null });
 const doneDomains = () => DATA.domains.filter(d => S.domains[d.id]?.done);
 const level = () => { let l = LEVELS[0][1]; for (const [min, n] of LEVELS) if (S.coins >= min) l = n; return l; };
@@ -387,19 +418,28 @@ function account() {
   render(`<div class="topbar"><button class="iconbtn" type="button" id="back" aria-label="חזרה">→</button><span></span></div>
     <div class="hero-card">${compassLogo(90)}<h2>שומרים את המסע</h2>
       <p class="muted">מתחברים פעם אחת. כך אפשר להמשיך מכל טלפון, האתגר השבועי מגיע בזמן, והמאמן רואה את ההתקדמות.</p></div>
-    <button class="btn ghost" type="button" id="google">המשך עם Google ${tag}</button>
+    ${user ? `<div class="panel"><h3>החשבון מחובר</h3><p>נכנסת עם <b dir="ltr">${esc(user.email)}</b>. המסע נשמר בענן.</p><button class="btn" type="button" id="inuse">להמשיך למסע</button></div>` : ""}
+    <button class="btn ghost" type="button" id="google">המשך עם Google ${sb ? '<span class="sketch-tag">בקרוב</span>' : tag}</button>
     <div class="panel" id="mailbox"><div class="field"><label for="em">או כניסה עם מייל</label><input id="em" type="email" inputmode="email" placeholder="name@example.com" autocomplete="email"></div>
       <button class="btn" type="button" id="mail">שליחת לינק כניסה למייל</button>
       <p class="small muted">בלי סיסמה: מגיע למייל לינק, לוחצים עליו ונכנסים.</p></div>
     <div class="field"><label for="cc">קוד הצטרפות מהמאמן (לא חובה)</label><input id="cc" placeholder="לדוגמה: MASA-24" value="${esc(S.coach)}"></div>
-    <button class="link" type="button" id="skip">להמשיך בלי חשבון <span class="sketch-tag">רק בסקיצה</span></button>`);
+    <button class="link" type="button" id="skip">להמשיך בלי חשבון ${sb ? '<span class="sketch-tag">נשמר רק בטלפון הזה</span>' : '<span class="sketch-tag">רק בסקיצה</span>'}</button>`);
   const done = (acc) => { S.account = acc; S.coach = document.getElementById("cc").value.trim(); S.started = true; save(); go("map"); };
   document.getElementById("back").onclick = () => { S.started = false; save(); welcome(); };
-  document.getElementById("google").onclick = () => { toast("בגרסה המלאה ייפתח כאן חלון ההתחברות של Google"); setTimeout(() => done({ type: "google" }), 900); };
-  document.getElementById("mail").onclick = () => {
+  document.getElementById("inuse")?.addEventListener("click", () => done({ type: "email", email: user.email }));
+  document.getElementById("google").onclick = () => { if (sb) return toast("כניסה עם Google תתווסף בקרוב. בינתיים אפשר להיכנס עם מייל"); toast("בגרסה המלאה ייפתח כאן חלון ההתחברות של Google"); setTimeout(() => done({ type: "google" }), 900); };
+  document.getElementById("mail").onclick = async () => {
     const em = document.getElementById("em").value.trim();
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) return toast("צריך לכתוב כתובת מייל מלאה, למשל name@example.com");
-    S.coach = document.getElementById("cc").value.trim();
+    S.coach = document.getElementById("cc").value.trim(); save();
+    if (sb) {
+      const btn = document.getElementById("mail"); btn.disabled = true; btn.textContent = "שולחים...";
+      const { error } = await sb.auth.signInWithOtp({ email: em, options: { emailRedirectTo: location.origin + location.pathname } });
+      if (error) { btn.disabled = false; btn.textContent = "שליחת לינק כניסה למייל"; return toast(/rate|limit/i.test(error.message) ? "נשלחו יותר מדי לינקים בזמן קצר. כדאי לנסות שוב בעוד כמה דקות" : "השליחה לא הצליחה. כדאי לבדוק את הכתובת ולנסות שוב"); }
+      document.getElementById("mailbox").innerHTML = `<h3>הלינק נשלח</h3><p>נשלח לינק כניסה אל <b dir="ltr">${esc(em)}</b>. פותחים את המייל בטלפון הזה ולוחצים על הלינק. אם המייל לא הגיע, כדאי לבדוק גם בתיקיית הספאם.</p>`;
+      return;
+    }
     document.getElementById("mailbox").innerHTML = `<h3>הלינק נשלח</h3><p>נשלח לינק כניסה אל <b dir="ltr">${esc(em)}</b>. בגרסה המלאה לוחצים עליו מתוך המייל.</p><button class="btn" type="button" id="cont">להמשיך <span class="sketch-tag">בסקיצה</span></button>`;
     document.getElementById("cont").onclick = () => done({ type: "email", email: em });
   };
@@ -816,9 +856,13 @@ function summary() {
     <div class="panel"><h3>אתגרים</h3><p>${S.challenges ? `בוצעו ${S.challenges} אתגרים` : "עוד לא בוצע אתגר"}</p>${S.notes.slice(-3).map(n => `<div class="tension"><b>✓ ${n.v}</b><span>${n.task}${n.note ? ` · "${esc(n.note)}"` : ""}</span></div>`).join("")}</div>
     <button class="btn" type="button" id="copy">העתקת סיכום לשליחה למאמן</button>
     <pre id="ct" class="small" hidden style="white-space:pre-wrap;background:var(--paper);padding:12px;border-radius:12px;user-select:all">${esc(coachText())}</pre>
-    <div class="panel" id="resetBox"><h3>מסע חדש</h3><p class="small muted">איפוס מתחיל מסע חדש מההתחלה. בגרסה המלאה המסע הנוכחי יישמר בארכיון, כדי שאפשר יהיה להשוות.</p>
+    <div class="panel"><h3>החשבון</h3>${user ? `<p>מחובר עם <b dir="ltr">${esc(user.email)}</b>. כל התקדמות נשמרת בענן.</p><button class="btn ghost" type="button" id="logout">יציאה מהחשבון</button>`
+      : `<p class="small muted">${sb ? "אין חשבון מחובר, ולכן המסע נשמר רק בטלפון הזה." : "בסקיצה המסע נשמר רק בדפדפן הזה."}</p>${sb ? `<button class="btn ghost" type="button" id="login">כניסה עם מייל</button>` : ""}`}</div>
+    <div class="panel" id="resetBox"><h3>מסע חדש</h3><p class="small muted">איפוס מתחיל מסע חדש מההתחלה. ${user ? "המסע הנוכחי נשמר בארכיון בענן, כדי שאפשר יהיה להשוות." : "בגרסה המחוברת המסע הנוכחי נשמר בארכיון, כדי שאפשר יהיה להשוות."}</p>
       <button class="btn ghost" type="button" id="reset">איפוס המסע</button></div>`, { nav: true });
   document.getElementById("m")?.addEventListener("click", () => go("map"));
+  document.getElementById("login")?.addEventListener("click", () => go("account"));
+  document.getElementById("logout")?.addEventListener("click", async () => { await sb.auth.signOut(); user = null; S.account = { type: "none" }; saveLocal(); toast("יצאת מהחשבון. המסע נשאר שמור בענן"); summary(); });
   document.getElementById("copy").onclick = () => {
     const show = () => { const p = document.getElementById("ct"); p.hidden = false; toast("הסיכום מוצג למטה, אפשר לסמן ולהעתיק"); };
     try { navigator.clipboard.writeText(coachText()).then(() => toast("הסיכום הועתק"), show); } catch (e) { show(); }
@@ -826,10 +870,28 @@ function summary() {
   document.getElementById("reset").onclick = () => {
     document.getElementById("resetBox").innerHTML = `<h3>לאפס את המסע?</h3><p class="small muted">כל התשובות, הקלפים והמטבעות יימחקו מהסקיצה.</p>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><button class="btn" type="button" id="yes">כן, לאפס</button><button class="btn ghost" type="button" id="no">ביטול</button></div>`;
-    document.getElementById("yes").onclick = () => { S = fresh(); save(); go("welcome"); };
+    document.getElementById("yes").onclick = async () => {
+      const keep = { account: S.account, name: S.name, coach: S.coach };
+      if (sb && user) await sb.from("journeys").update({ active: false }).eq("id", S.journeyId);
+      S = Object.assign(fresh(), keep); save(); go("welcome");
+    };
     document.getElementById("no").onclick = () => summary();
   };
 }
 
-go(S.started ? "map" : "welcome");
+async function boot() {
+  if (sb) {
+    try {
+      const { data } = await sb.auth.getSession();
+      if (data.session?.user) await onSignedIn(data.session.user);
+    } catch (e) {}
+    sb.auth.onAuthStateChange((event, session) => {
+      const u = session?.user;
+      if (u && !user) onSignedIn(u).then(() => { go("map"); toast("נכנסת בהצלחה. המסע נשמר בענן"); });
+      if (!u) user = null;
+    });
+  }
+  go(S.started ? "map" : "welcome");
+}
+boot();
 </script>
