@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FAF6F0">
+<meta name="color-scheme" content="only light">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<title>לוח המאמן · מסע הערכים</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&family=Assistant:wght@400;600;700;800&display=swap">
+<style>
+/* Coach dashboard: summary row first, then the join code, then one card per trainee. Same sand palette as the app. */
+:root {
+  --sand: #FAF6F0; --sand-2: #F1E9DD; --paper: #FFFDF9; --ink: #403A33; --ink-soft: #7A7067; --line: #E6DCCD;
+  --sage: #BFC8A4; --sage-deep: #5F7558; --rose: #EFC9B8; --rose-deep: #A37772; --sky: #A7B9C9; --gold: #B8935A; --gold-deep: #8C6B3A;
+  --shadow: 0 1px 2px rgba(64,58,51,.08), 0 6px 18px rgba(64,58,51,.08);
+  --font-display: "Frank Ruhl Libre", "David Libre", Georgia, serif;
+  --font-body: "Assistant", "Heebo", "Segoe UI", Arial, sans-serif;
+  color-scheme: only light;
+}
+* { box-sizing: border-box; }
+html, body { background: var(--sand); }
+body { margin: 0; color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.55;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 20px 48px; }
+button { font: inherit; color: inherit; }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.wrap { max-width: 900px; margin: 0 auto; display: grid; gap: 22px; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 500; margin: 0; line-height: 1.2; text-wrap: balance; }
+h1 { font-size: 32px; } h2 { font-size: 22px; } h3 { font-size: 19px; }
+p { margin: 0; }
+.muted { color: var(--ink-soft); } .small { font-size: 14px; }
+.eyebrow { font-size: 12px; font-weight: 800; letter-spacing: .08em; color: var(--gold-deep); }
+.top { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.top img { width: 52px; height: 52px; border-radius: 14px; }
+.top .who { margin-inline-start: auto; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; font-size: 14px; }
+.panel { background: var(--paper); border-radius: 18px; padding: 18px; box-shadow: var(--shadow); display: grid; gap: 12px; min-width: 0; }
+.btn { appearance: none; border: 0; cursor: pointer; border-radius: 999px; padding: 11px 20px; font-weight: 800; background: var(--ink); color: var(--sand); }
+.btn.ghost { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--line); }
+.btn.gold { background: var(--gold); color: var(--paper); }
+.btn.sm { padding: 7px 14px; font-size: 14px; }
+.btn[disabled] { opacity: .4; cursor: not-allowed; }
+input { width: 100%; border: 1.5px solid var(--line); background: var(--paper); color: var(--ink); border-radius: 12px; padding: 11px 13px; font: inherit; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+.stat { background: var(--paper); border-radius: 16px; padding: 14px 16px; box-shadow: var(--shadow); display: grid; gap: 2px; }
+.stat b { font-family: var(--font-display); font-size: 30px; font-weight: 500; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.stat span { font-size: 13px; color: var(--ink-soft); font-weight: 700; }
+.codes { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.code { font-family: ui-monospace, Menlo, monospace; font-size: 18px; font-weight: 700; letter-spacing: .06em; background: var(--sand-2); border-radius: 10px; padding: 6px 12px; direction: ltr; }
+.trainees { display: grid; gap: 14px; }
+.tcard { background: var(--paper); border-radius: 18px; box-shadow: var(--shadow); overflow: hidden; }
+.thead { appearance: none; border: 0; background: none; width: 100%; text-align: right; cursor: pointer; padding: 16px 18px; display: grid; gap: 10px; }
+.trow { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.trow h3 { margin-inline-end: auto; }
+.pill { font-size: 12px; font-weight: 800; border-radius: 99px; padding: 2px 10px; background: var(--sand-2); color: var(--ink-soft); white-space: nowrap; }
+.pill.ok { background: #DCE5D4; color: var(--sage-deep); }
+.pill.warn { background: #F5E2D6; color: #8E5A4A; }
+.bar { height: 8px; border-radius: 99px; background: var(--sand-2); overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--gold); border-radius: 99px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-size: 14px; font-weight: 700; border-radius: 99px; padding: 3px 11px; background: var(--sage); }
+.chip.core { background: var(--gold); color: var(--paper); }
+.tbody { padding: 0 18px 18px; display: grid; gap: 14px; border-top: 1px solid var(--line); padding-top: 14px; }
+.tbody[hidden] { display: none; }
+.kv { display: grid; gap: 6px; }
+.kv > b { font-size: 13px; color: var(--gold-deep); }
+.note { background: var(--sand); border-radius: 12px; padding: 10px 12px; font-size: 15px; }
+.note b { display: block; font-size: 13px; color: var(--ink-soft); }
+.msg { white-space: pre-wrap; background: var(--sand); border-radius: 12px; padding: 10px 12px; font-size: 15px; user-select: all; }
+.empty { text-align: center; padding: 26px; border: 1.5px dashed var(--line); border-radius: 18px; color: var(--ink-soft); display: grid; gap: 8px; }
+.toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: var(--ink); color: var(--sand); padding: 10px 18px; border-radius: 999px; font-size: 14px; font-weight: 700; z-index: 50; max-width: 90%; text-align: center; }
+</style>
+</head>
+<body>
+<div class="wrap" id="root"><p class="muted">טוענים...</p></div>
+<script src="vendor/supabase-2.118.0.js"></script>
+<script>
+const CLOUD = __CLOUD__;
+const SITE = location.origin + location.pathname.replace(/coach\.html$/, "");
+const sb = window.supabase.createClient(CLOUD.url, CLOUD.key);
+const root = document.getElementById("root");
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+function toast(m) { document.querySelector(".toast")?.remove(); const t = document.createElement("div"); t.className = "toast"; t.textContent = m; document.body.appendChild(t); setTimeout(() => t.remove(), 2600); }
+async function copy(text, okMsg) { try { await navigator.clipboard.writeText(text); toast(okMsg || "הועתק"); } catch (e) { toast("סמנו את הטקסט והעתיקו ידנית"); } }
+function ago(iso) {
+  if (!iso) return "עוד לא נכנס";
+  const m = Math.round((Date.now() - Date.parse(iso)) / 60000);
+  if (m < 60) return m <= 1 ? "עכשיו" : `לפני ${m} דקות`;
+  const h = Math.round(m / 60); if (h < 24) return h === 1 ? "לפני שעה" : `לפני ${h} שעות`;
+  const d = Math.round(h / 24); return d === 1 ? "אתמול" : `לפני ${d} ימים`;
+}
+const header = (email) => `<div class="top"><img src="icons/icon-192.png" alt=""><div><span class="eyebrow">מסע הערכים</span><h1>לוח המאמן</h1></div>
+  ${email ? `<div class="who"><span class="muted" dir="ltr">${esc(email)}</span><button class="btn ghost sm" id="out" type="button">יציאה</button></div>` : ""}</div>`;
+
+/* ---------- login ---------- */
+function loginView(sent) {
+  root.innerHTML = header() + `<div class="panel" style="max-width:460px">
+    ${sent ? `<h2>הלינק נשלח</h2><p>פותחים את המייל ולוחצים על הלינק. הוא יחזיר לכאן, ללוח המאמן.</p>`
+      : `<h2>כניסה למאמנים</h2><p class="muted">נכנסים עם אותו מייל שהוגדר כחשבון מאמן.</p>
+        <label for="em" class="small" style="font-weight:700">מייל</label><input id="em" type="email" dir="ltr" autocomplete="email" placeholder="name@example.com">
+        <button class="btn" id="send" type="button">שליחת לינק כניסה</button>`}</div>`;
+  document.getElementById("send")?.addEventListener("click", async () => {
+    const em = document.getElementById("em").value.trim();
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) return toast("צריך כתובת מייל מלאה");
+    const { error } = await sb.auth.signInWithOtp({ email: em, options: { emailRedirectTo: location.origin + location.pathname, shouldCreateUser: false } });
+    if (error) return toast(/rate|limit/i.test(error.message) ? "נשלחו יותר מדי לינקים. כדאי לנסות שוב בעוד כמה דקות" : "השליחה לא הצליחה. האם המייל הזה נכנס פעם לאפליקציה?");
+    loginView(true);
+  });
+}
+
+/* ---------- dashboard ---------- */
+async function dashboard(user) {
+  const { data: me } = await sb.from("profiles").select("role").eq("id", user.id).maybeSingle();
+  if (me?.role !== "coach") {
+    root.innerHTML = header(user.email) + `<div class="panel"><h2>החשבון הזה עוד לא מוגדר כמאמן</h2>
+      <p>כדי להפוך אותו לחשבון מאמן, מריצים פעם אחת ב־Supabase את הקוד שבסוף הקובץ <b>supabase/schema-coach.sql</b>, עם המייל <b dir="ltr">${esc(user.email)}</b>.</p></div>`;
+    bindOut(); return;
+  }
+  const [{ data: codes }, { data: rows, error }] = await Promise.all([
+    sb.from("coach_codes").select("code,created_at").order("created_at"),
+    sb.from("profiles").select("id,name,email,coach_code,summary,share_reflections,last_active,push_enabled,reminder_day,reminder_time,next_challenge_value,next_challenge,challenges_done").neq("id", user.id)
+  ]);
+  if (error) { root.innerHTML = header(user.email) + `<div class="panel"><h2>לא הצלחנו לטעון את המתאמנים</h2><p class="muted">${esc(error.message)}</p></div>`; bindOut(); return; }
+  const list = (rows || []).sort((a, b) => Date.parse(b.last_active || 0) - Date.parse(a.last_active || 0));
+  const week = Date.now() - 7 * 864e5;
+  const active = list.filter(t => t.last_active && Date.parse(t.last_active) > week).length;
+  const withCore = list.filter(t => t.summary?.core?.length).length;
+  const challenges = list.reduce((n, t) => n + (t.challenges_done || 0), 0);
+  const DAYS = ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"];
+  const invite = c => `הוזמנת למסע הערכים 🧭\nנכנסים כאן: ${SITE}\nובמסך "שומרים את המסע" כותבים את קוד ההצטרפות: ${c}`;
+  const weekly = t => `היי${t.name ? " " + t.name : ""}, האתגר השבועי שלך במסע הערכים (${t.next_challenge_value}):\n${t.next_challenge}\nאשמח לשמוע איך היה!`;
+
+  root.innerHTML = header(user.email) + `
+    <div class="stats">
+      <div class="stat"><b>${list.length}</b><span>מתאמנים</span></div>
+      <div class="stat"><b>${active}</b><span>פעילים השבוע</span></div>
+      <div class="stat"><b>${withCore}</b><span>גילו ערכי ליבה</span></div>
+      <div class="stat"><b>${challenges}</b><span>אתגרים שבוצעו</span></div>
+    </div>
+    <div class="panel"><h2>קוד הצטרפות</h2>
+      <p class="muted small">מתאמן שמכניס את הקוד באפליקציה מופיע כאן. אפשר לשלוח את ההזמנה ב־WhatsApp.</p>
+      <div class="codes">${(codes || []).map(c => `<span class="code">${esc(c.code)}</span><button class="btn ghost sm" type="button" data-inv="${esc(c.code)}">העתקת הזמנה</button>`).join("") || '<span class="muted">עוד אין קוד.</span>'}
+        <button class="btn gold sm" type="button" id="newCode">יצירת קוד חדש</button></div></div>
+    <h2>המתאמנים</h2>
+    <div class="trainees">${list.length ? list.map((t, i) => {
+      const s = t.summary || {}, pct = Math.round(((s.stations || 0) / (s.total || 8)) * 100);
+      return `<article class="tcard"><button class="thead" type="button" data-open="${i}" aria-expanded="false">
+        <div class="trow"><h3>${esc(t.name || "ללא שם")}</h3>
+          <span class="pill ${t.push_enabled ? "ok" : "warn"}">${t.push_enabled ? "תזכורות פעילות" : "בלי תזכורות"}</span>
+          <span class="pill">${ago(t.last_active)}</span></div>
+        <div class="trow small muted"><span>${s.stations || 0} מתוך ${s.total || 8} תחנות</span><span>·</span><span>${t.challenges_done || 0} אתגרים</span>${s.inProgress?.length ? `<span>·</span><span>באמצע: ${esc(s.inProgress.join(", "))}</span>` : ""}</div>
+        <div class="bar"><i style="width:${pct}%"></i></div>
+        ${s.core?.length ? `<div class="chips">${s.core.map(v => `<span class="chip core">${esc(v)}</span>`).join("")}</div>` : '<span class="small muted">ערכי הליבה עוד לא נבחרו</span>'}
+      </button>
+      <div class="tbody" id="tb${i}" hidden>
+        ${t.email ? `<p class="small muted" dir="ltr" style="text-align:right">${esc(t.email)}</p>` : ""}
+        <div class="kv"><b>הערכים לפי תחום</b>${(s.domains || []).map(d => `<div class="note"><b>${esc(d.icon)} ${esc(d.name)}</b>${esc(d.values.join(" · "))}${d.tensions?.length ? `<div class="small muted">${d.tensions.map(esc).join("<br>")}</div>` : ""}</div>`).join("") || '<span class="small muted">עוד לא הושלמה תחנה.</span>'}</div>
+        <div class="kv"><b>רפלקציות</b>${t.share_reflections ? ((s.reflections || []).map(r => `<div class="note"><b>${esc(r.domain)}${r.value ? " · " + esc(r.value) : ""}</b>${esc(r.text)}</div>`).join("") || '<span class="small muted">עוד לא נכתבו רפלקציות.</span>') : '<span class="small muted">המתאמן בחר לא לשתף את הרפלקציות.</span>'}</div>
+        <div class="kv"><b>אתגרים</b>${(s.notes || []).slice().reverse().map(n => `<div class="note"><b>✓ ${esc(n.v)}</b>${esc(n.task)}${n.note ? `<div>"${esc(n.note)}"</div>` : ""}</div>`).join("") || '<span class="small muted">עוד לא בוצע אתגר.</span>'}</div>
+        <div class="kv"><b>תזכורת</b><span class="small">${t.reminder_day != null && t.reminder_time ? `כל יום ${DAYS[t.reminder_day]} בשעה ${esc(t.reminder_time)}` : "לא נקבעה"}</span></div>
+        ${t.next_challenge ? `<div class="kv"><b>הודעה שבועית לשליחה ב־WhatsApp</b><div class="msg">${esc(weekly(t))}</div><button class="btn ghost sm" type="button" data-msg="${i}" style="justify-self:start">העתקת ההודעה</button></div>` : ""}
+      </div></article>`;
+    }).join("") : `<div class="empty"><b>עוד אין מתאמנים</b><span>שולחים למתאמנים את ההזמנה עם קוד ההצטרפות. ברגע שהם נכנסים עם הקוד, הם מופיעים כאן.</span></div>`}</div>`;
+
+  bindOut();
+  root.querySelectorAll("[data-inv]").forEach(b => b.onclick = () => copy(invite(b.dataset.inv), "ההזמנה הועתקה"));
+  root.querySelectorAll("[data-msg]").forEach(b => b.onclick = () => copy(weekly(list[+b.dataset.msg]), "ההודעה הועתקה"));
+  root.querySelectorAll("[data-open]").forEach(b => b.onclick = () => {
+    const body = document.getElementById("tb" + b.dataset.open), open = body.hidden;
+    body.hidden = !open; b.setAttribute("aria-expanded", open);
+  });
+  document.getElementById("newCode").onclick = async () => {
+    const abc = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    const code = "MASA-" + Array.from(crypto.getRandomValues(new Uint8Array(4)), n => abc[n % abc.length]).join("");
+    const { error } = await sb.from("coach_codes").insert({ code, coach_id: user.id });
+    if (error) return toast("יצירת הקוד לא הצליחה. כדאי לנסות שוב");
+    toast("נוצר קוד " + code); dashboard(user);
+  };
+}
+function bindOut() { document.getElementById("out")?.addEventListener("click", async () => { await sb.auth.signOut(); loginView(); }); }
+
+(async () => {
+  const { data } = await sb.auth.getSession();
+  if (data.session?.user) dashboard(data.session.user); else loginView();
+  sb.auth.onAuthStateChange((ev, session) => { if (ev === "SIGNED_IN" && session?.user) dashboard(session.user); });
+})();
+</script>
+</body>
+</html>

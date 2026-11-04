@@ -126,6 +126,9 @@ def main():
     page = head + html[:title_end] + "\n" + html[title_end:].split("<div class=\"app\"", 1)[0] \
         + "</head>\n<body>\n<div class=\"app\"" + html[title_end:].split("<div class=\"app\"", 1)[1] + "\n</body>\n</html>\n"
     (site / "index.html").write_text(page, encoding="utf-8")
+    # Coach dashboard
+    coach = (OUT / "coach-template.html").read_text(encoding="utf-8").replace("__CLOUD__", json.dumps(SUPABASE))
+    (site / "coach.html").write_text(coach, encoding="utf-8")
     print(f"values={len(values)} domains={len(domains)} "
           f"questions={sum(len(d['s1']) + len(d['s2']) + len(d['s3']) for d in domains)} "
           f"size={len(html) // 1024}KB")

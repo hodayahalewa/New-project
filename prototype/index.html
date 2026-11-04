@@ -209,6 +209,9 @@ textarea { min-height: 96px; resize: vertical; }
 .notif b { font-size: 12px; color: #7A7067; }
 .notif span { font-size: 14px; }
 
+.check { display: flex; gap: 10px; align-items: flex-start; font-size: 15px; }
+.check input { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--gold-deep); flex: none; }
+
 /* summary */
 .core3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
 .core3 .vcard { cursor: default; }
@@ -249,7 +252,7 @@ const KEY = "masa-haarachim-proto-v1";
 
 /* ---------- state ---------- */
 const uuid = () => (crypto.randomUUID ? crypto.randomUUID() : "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c => (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)));
-const fresh = () => ({ journeyId: uuid(), updatedAt: 0, name: "", started: false, coins: 0, domains: {}, core: [], coreDone: false, peek: false, challenges: 0, notes: [], shop: [], asked: {}, reminders: { push: true, mail: false, day: "ראשון", time: "09:00" }, account: null, coach: "" });
+const fresh = () => ({ journeyId: uuid(), updatedAt: 0, name: "", started: false, coins: 0, domains: {}, core: [], coreDone: false, peek: false, challenges: 0, notes: [], shop: [], asked: {}, reminders: { push: true, mail: false, day: "ראשון", time: "09:00" }, account: null, coach: "", share: false });
 let S = load();
 function load() { try { const s = JSON.parse(localStorage.getItem(KEY) || "null"); if (s && typeof s === "object") return Object.assign(fresh(), s); } catch (e) {} return fresh(); }
 function saveLocal() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
@@ -263,6 +266,23 @@ function queueSync() {
   clearTimeout(syncTimer);
   syncTimer = setTimeout(pushJourney, 900);
 }
+/* What the coach can see. Reflections and challenge notes are included only when the trainee chose to share them. */
+function buildSummary() {
+  const dd = doneDomains();
+  return {
+    stations: dd.length, total: DATA.domains.length, core: S.core, coins: S.coins, level: level(),
+    inProgress: DATA.domains.filter(d => S.domains[d.id]?.run && !S.domains[d.id]?.done).map(d => d.name),
+    domains: dd.map(d => ({ name: d.name, icon: d.icon, values: S.domains[d.id].chosen, tensions: (S.domains[d.id].tensions || []).map(t => `${t.tension}: ${t.choice}`) })),
+    challenges: S.challenges,
+    notes: S.notes.slice(-10).map(n => S.share ? n : { v: n.v, task: n.task }),
+    reflections: S.share ? dd.filter(d => S.domains[d.id].reflection).map(d => ({ domain: d.name, value: S.domains[d.id].reflectValue || "", text: S.domains[d.id].reflection })) : []
+  };
+}
+async function checkCoachCode(code) {
+  if (!sb || !code) return true;
+  const { data, error } = await sb.rpc("code_exists", { c: code });
+  return error ? true : !!data;
+}
 async function pushJourney() {
   if (!sb || !user) return;
   S.journeyId ||= uuid();
@@ -272,7 +292,8 @@ async function pushJourney() {
   const { error: pe } = await sb.from("profiles").upsert({
     id: user.id, name: S.name || null, coach_code: S.coach || null,
     push_enabled: !!r.push, reminder_day: DAYS.indexOf(r.day), reminder_time: r.time,
-    next_challenge_value: v, next_challenge: v ? V[v].challenge : null, challenges_done: S.challenges
+    next_challenge_value: v, next_challenge: v ? V[v].challenge : null, challenges_done: S.challenges,
+    email: user.email, summary: buildSummary(), share_reflections: !!S.share, last_active: new Date().toISOString()
   });
   if (pe) console.warn("profile sync failed", pe.message);
 }
@@ -422,16 +443,20 @@ function account() {
     <div class="panel" id="mailbox"><div class="field"><label for="em">או כניסה עם מייל</label><input id="em" type="email" inputmode="email" placeholder="name@example.com" autocomplete="email"></div>
       <button class="btn" type="button" id="mail">שליחת לינק כניסה למייל</button>
       <p class="small muted">בלי סיסמה: מגיע למייל לינק, לוחצים עליו ונכנסים.</p></div>
-    <div class="field"><label for="cc">קוד הצטרפות מהמאמן (לא חובה)</label><input id="cc" placeholder="לדוגמה: MASA-24" value="${esc(S.coach)}"></div>
+    <div class="field"><label for="cc">קוד הצטרפות מהמאמן (לא חובה)</label><input id="cc" placeholder="לדוגמה: MASA-24" value="${esc(S.coach)}" autocapitalize="characters"></div>
+    <label class="check"><input type="checkbox" id="sh" ${S.share ? "checked" : ""}> לשתף עם המאמן גם את הרפלקציות וההערות שלי</label>
+    <p class="small muted" style="margin-top:-10px">המאמן רואה תמיד את הערכים שנבחרו ואת ההתקדמות. את מה שכתבת הוא יראה רק אם מסמנים כאן.</p>
     <button class="link" type="button" id="skip">להמשיך בלי חשבון ${sb ? '<span class="sketch-tag">נשמר רק בטלפון הזה</span>' : '<span class="sketch-tag">רק בסקיצה</span>'}</button>`);
-  const done = (acc) => { S.account = acc; S.coach = document.getElementById("cc").value.trim(); S.started = true; save(); go("map"); };
+  const done = (acc) => { S.account = acc; S.coach = document.getElementById("cc").value.trim().toUpperCase(); S.share = document.getElementById("sh").checked; S.started = true; save(); go("map"); };
+  document.getElementById("cc").addEventListener("change", async e => { const c = e.target.value.trim(); if (c && !(await checkCoachCode(c))) toast("הקוד לא נמצא. כדאי לבדוק אותו מול המאמן"); });
+  document.getElementById("sh").addEventListener("change", e => { S.share = e.target.checked; save(); });
   document.getElementById("back").onclick = () => { S.started = false; save(); welcome(); };
   document.getElementById("inuse")?.addEventListener("click", () => done({ type: "email", email: user.email }));
   document.getElementById("google").onclick = () => { if (sb) return toast("כניסה עם Google תתווסף בקרוב. בינתיים אפשר להיכנס עם מייל"); toast("בגרסה המלאה ייפתח כאן חלון ההתחברות של Google"); setTimeout(() => done({ type: "google" }), 900); };
   document.getElementById("mail").onclick = async () => {
     const em = document.getElementById("em").value.trim();
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) return toast("צריך לכתוב כתובת מייל מלאה, למשל name@example.com");
-    S.coach = document.getElementById("cc").value.trim(); save();
+    S.coach = document.getElementById("cc").value.trim().toUpperCase(); S.share = document.getElementById("sh").checked; save();
     if (sb) {
       const btn = document.getElementById("mail"); btn.disabled = true; btn.textContent = "שולחים...";
       const { error } = await sb.auth.signInWithOtp({ email: em, options: { emailRedirectTo: location.origin + location.pathname } });
@@ -918,12 +943,24 @@ function summary() {
     <div class="panel"><h3>אתגרים</h3><p>${S.challenges ? `בוצעו ${S.challenges} אתגרים` : "עוד לא בוצע אתגר"}</p>${S.notes.slice(-3).map(n => `<div class="tension"><b>✓ ${n.v}</b><span>${n.task}${n.note ? ` · "${esc(n.note)}"` : ""}</span></div>`).join("")}</div>
     <button class="btn" type="button" id="copy">העתקת סיכום לשליחה למאמן</button>
     <pre id="ct" class="small" hidden style="white-space:pre-wrap;background:var(--paper);padding:12px;border-radius:12px;user-select:all">${esc(coachText())}</pre>
+    <div class="panel"><h3>המאמן</h3>
+      <div class="field"><label for="cc2">קוד הצטרפות מהמאמן</label><input id="cc2" placeholder="לדוגמה: MASA-24" value="${esc(S.coach)}" autocapitalize="characters"></div>
+      <div class="toggle"><span>לשתף עם המאמן את הרפלקציות וההערות</span><button class="switch" type="button" role="switch" id="share" aria-checked="${!!S.share}" aria-label="שיתוף רפלקציות עם המאמן"></button></div>
+      <button class="btn ghost" type="button" id="saveCoach">שמירה</button></div>
     <div class="panel"><h3>החשבון</h3>${user ? `<p>מחובר עם <b dir="ltr">${esc(user.email)}</b>. כל התקדמות נשמרת בענן.</p><button class="btn ghost" type="button" id="logout">יציאה מהחשבון</button>`
       : `<p class="small muted">${sb ? "אין חשבון מחובר, ולכן המסע נשמר רק בטלפון הזה." : "בסקיצה המסע נשמר רק בדפדפן הזה."}</p>${sb ? `<button class="btn ghost" type="button" id="login">כניסה עם מייל</button>` : ""}`}</div>
     <div class="panel" id="resetBox"><h3>מסע חדש</h3><p class="small muted">איפוס מתחיל מסע חדש מההתחלה. ${user ? "המסע הנוכחי נשמר בארכיון בענן, כדי שאפשר יהיה להשוות." : "בגרסה המחוברת המסע הנוכחי נשמר בארכיון, כדי שאפשר יהיה להשוות."}</p>
       <button class="btn ghost" type="button" id="reset">איפוס המסע</button></div>`, { nav: true });
   document.getElementById("m")?.addEventListener("click", () => go("map"));
   document.getElementById("login")?.addEventListener("click", () => go("account"));
+  const shb = document.getElementById("share");
+  shb.onclick = () => shb.setAttribute("aria-checked", shb.getAttribute("aria-checked") !== "true");
+  document.getElementById("saveCoach").onclick = async () => {
+    const c = document.getElementById("cc2").value.trim().toUpperCase();
+    if (c && !(await checkCoachCode(c))) return toast("הקוד לא נמצא. כדאי לבדוק אותו מול המאמן");
+    S.coach = c; S.share = shb.getAttribute("aria-checked") === "true"; save();
+    toast(user ? "נשמר. המאמן יראה את העדכון" : "נשמר בטלפון. המאמן יראה אותו אחרי כניסה עם מייל");
+  };
   document.getElementById("logout")?.addEventListener("click", async () => { await sb.auth.signOut(); user = null; S.account = { type: "none" }; saveLocal(); toast("יצאת מהחשבון. המסע נשאר שמור בענן"); summary(); });
   document.getElementById("copy").onclick = () => {
     const show = () => { const p = document.getElementById("ct"); p.hidden = false; toast("הסיכום מוצג למטה, אפשר לסמן ולהעתיק"); };
