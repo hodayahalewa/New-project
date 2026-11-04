@@ -67,6 +67,15 @@ input { width: 100%; border: 1.5px solid var(--line); background: var(--paper); 
 .kv > b { font-size: 13px; color: var(--gold-deep); }
 .note { background: var(--sand); border-radius: 12px; padding: 10px 12px; font-size: 15px; }
 .note b { display: block; font-size: 13px; color: var(--ink-soft); }
+textarea { width: 100%; min-height: 300px; border: 1.5px solid var(--line); background: var(--paper); color: var(--ink); border-radius: 12px; padding: 12px; font: inherit; font-size: 15px; line-height: 1.5; resize: vertical; }
+select { width: 100%; border: 1.5px solid var(--line); background: var(--paper); color: var(--ink); border-radius: 12px; padding: 11px 13px; font: inherit; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.field { display: grid; gap: 6px; min-width: 0; }
+.field label { font-size: 14px; font-weight: 700; }
+.check { display: flex; gap: 10px; align-items: center; font-size: 15px; }
+.check input { width: 20px; height: 20px; accent-color: var(--gold-deep); }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.btn.wa { background: #2E7D5B; color: #fff; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
 .msg { white-space: pre-wrap; background: var(--sand); border-radius: 12px; padding: 10px 12px; font-size: 15px; user-select: all; }
 .empty { text-align: center; padding: 26px; border: 1.5px dashed var(--line); border-radius: 18px; color: var(--ink-soft); display: grid; gap: 8px; }
 .toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: var(--ink); color: var(--sand); padding: 10px 18px; border-radius: 999px; font-size: 14px; font-weight: 700; z-index: 50; max-width: 90%; text-align: center; }
@@ -128,7 +137,28 @@ async function dashboard(user) {
   const withCore = list.filter(t => t.summary?.core?.length).length;
   const challenges = list.reduce((n, t) => n + (t.challenges_done || 0), 0);
   const DAYS = ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"];
-  const invite = c => `הוזמנת למסע הערכים 🧭\nנכנסים כאן: ${SITE}\nובמסך "שומרים את המסע" כותבים את קוד ההצטרפות: ${c}`;
+  const invite = (c, name, pilot) => [
+    `היי${name ? " " + name : ""} 😊`,
+    `הזמנתי אותך ל*מסע הערכים* 🧭`,
+    `זה משחק קצר בטלפון שעוזר לגלות מה הכי חשוב לך בכל תחום בחיים: משפחה, זוגיות, עבודה, חברים ועוד.`,
+    ``,
+    `*איך מתחילים:*`,
+    `1. פותחים את הלינק ב־Chrome או ב־Safari:`,
+    SITE,
+    `2. כותבים שם ולוחצים "יוצאים לדרך".`,
+    `3. במסך "שומרים את המסע" כותבים את המייל ואת קוד ההצטרפות: *${c}*`,
+    `4. מגיע מייל עם לינק כניסה, לוחצים עליו ונכנסים. אם המייל לא הגיע, כדאי לבדוק בספאם.`,
+    ``,
+    `*כדאי לדעת:*`,
+    `⏱️ כל תחנה במפה לוקחת בערך 7 דקות. אפשר לעצור ולהמשיך מתי שרוצים.`,
+    `🔔 במסך "אתגר" אפשר להפעיל תזכורת שבועית לטלפון.`,
+    `📱 באייפון: כדי לקבל תזכורות, קודם מוסיפים את האתר למסך הבית (כפתור השיתוף ב־Safari ← "הוספה למסך הבית").`,
+    `🔒 אני רואה רק את הערכים שבחרת ואת ההתקדמות. את מה שכתבת אראה רק אם בוחרים לשתף.`,
+    ...(pilot ? [``, `זו גרסה ראשונה, ואני בודקת אותה עם כמה אנשים. כל הערה תעזור לי: מה היה נעים, מה לא היה ברור, ומה חסר.`] : []),
+    ``,
+    `אשמח לשמוע מה דעתך אחרי התחנה הראשונה 💛`
+  ].join("\n");
+  const waPhone = p => { const d = (p || "").replace(/\D/g, ""); return d.startsWith("0") ? "972" + d.slice(1) : d; };
   const weekly = t => `היי${t.name ? " " + t.name : ""}, האתגר השבועי שלך במסע הערכים (${t.next_challenge_value}):\n${t.next_challenge}\nאשמח לשמוע איך היה!`;
 
   root.innerHTML = header(user.email) + `
@@ -140,8 +170,22 @@ async function dashboard(user) {
     </div>
     <div class="panel"><h2>קוד הצטרפות</h2>
       <p class="muted small">מתאמן שמכניס את הקוד באפליקציה מופיע כאן. אפשר לשלוח את ההזמנה ב־WhatsApp.</p>
-      <div class="codes">${(codes || []).map(c => `<span class="code">${esc(c.code)}</span><button class="btn ghost sm" type="button" data-inv="${esc(c.code)}">העתקת הזמנה</button>`).join("") || '<span class="muted">עוד אין קוד.</span>'}
+      <div class="codes">${(codes || []).map(c => `<span class="code">${esc(c.code)}</span>`).join("") || '<span class="muted">עוד אין קוד. יוצרים קוד, ואז מכינים הזמנה.</span>'}
         <button class="btn gold sm" type="button" id="newCode">יצירת קוד חדש</button></div></div>
+    ${(codes || []).length ? `<div class="panel" id="inviteBox"><h2>הזמנה למתאמן</h2>
+      <p class="muted small">ממלאים, בודקים את הנוסח ושולחים. אפשר לשנות כל מילה בהודעה לפני השליחה.</p>
+      <div class="grid2">
+        <div class="field"><label for="icode">קוד הצטרפות</label><select id="icode">${codes.map(c => `<option>${esc(c.code)}</option>`).join("")}</select></div>
+        <div class="field"><label for="iname">שם המתאמן (לא חובה)</label><input id="iname" placeholder="לדוגמה: נועה"></div>
+        <div class="field"><label for="iphone">טלפון לשליחה ישירה (לא חובה)</label><input id="iphone" type="tel" inputmode="tel" dir="ltr" placeholder="050-1234567"></div>
+      </div>
+      <label class="check"><input type="checkbox" id="ipilot"> להוסיף פסקה על פיילוט ובקשה למשוב</label>
+      <div class="field"><label for="itext">ההודעה</label><textarea id="itext"></textarea></div>
+      <div class="actions"><a class="btn wa" id="isend" href="#" target="_blank" rel="noopener">שליחה ב־WhatsApp</a>
+        <button class="btn ghost" type="button" id="icopy">העתקת ההודעה</button>
+        <button class="btn ghost" type="button" id="ireset">חזרה לנוסח המקורי</button></div>
+      <p class="small muted">בלי מספר טלפון, WhatsApp ייפתח ותבחרו למי לשלוח. במספר ישראלי אפשר לכתוב 05X כרגיל.</p>
+    </div>` : ""}
     <h2>המתאמנים</h2>
     <div class="trainees">${list.length ? list.map((t, i) => {
       const s = t.summary || {}, pct = Math.round(((s.stations || 0) / (s.total || 8)) * 100);
@@ -164,7 +208,20 @@ async function dashboard(user) {
     }).join("") : `<div class="empty"><b>עוד אין מתאמנים</b><span>שולחים למתאמנים את ההזמנה עם קוד ההצטרפות. ברגע שהם נכנסים עם הקוד, הם מופיעים כאן.</span></div>`}</div>`;
 
   bindOut();
-  root.querySelectorAll("[data-inv]").forEach(b => b.onclick = () => copy(invite(b.dataset.inv), "ההזמנה הועתקה"));
+  const box = document.getElementById("inviteBox");
+  if (box) {
+    const $ = id => document.getElementById(id);
+    let edited = false;
+    const fill = () => { if (!edited) $("itext").value = invite($("icode").value, $("iname").value.trim(), $("ipilot").checked); link(); };
+    const link = () => { const ph = waPhone($("iphone").value); $("isend").href = `https://wa.me/${ph}?text=${encodeURIComponent($("itext").value)}`; };
+    ["icode", "ipilot"].forEach(id => $(id).addEventListener("change", fill));
+    $("iname").addEventListener("input", fill);
+    $("iphone").addEventListener("input", link);
+    $("itext").addEventListener("input", () => { edited = true; link(); });
+    $("ireset").onclick = () => { edited = false; fill(); toast("חזרנו לנוסח המקורי"); };
+    $("icopy").onclick = () => copy($("itext").value, "ההודעה הועתקה");
+    fill();
+  }
   root.querySelectorAll("[data-msg]").forEach(b => b.onclick = () => copy(weekly(list[+b.dataset.msg]), "ההודעה הועתקה"));
   root.querySelectorAll("[data-open]").forEach(b => b.onclick = () => {
     const body = document.getElementById("tb" + b.dataset.open), open = body.hidden;
