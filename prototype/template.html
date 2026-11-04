@@ -5,7 +5,8 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&family=Assistant:wght@400;600;700;800&display=swap">
 <style>
 /* Layout: a phone-width app column (centred on desktop). Screens swap inside it; a bottom tab bar on the hub screens.
-   Palette 6 "חול ופסטל": sand ground, sage / dusty pink / dusty blue accents, espresso ink, brass gold. */
+   Palette 6 "חול ופסטל": sand ground, sage / dusty pink / dusty blue accents, espresso ink, brass gold.
+   The app deliberately keeps this one light look, also when the phone is in dark mode. */
 :root {
   --sand: #FAF6F0;
   --sand-2: #F1E9DD;
@@ -26,20 +27,7 @@
   --font-display: "Frank Ruhl Libre", "David Libre", Georgia, serif;
   --font-body: "Assistant", "Heebo", "Segoe UI", Arial, sans-serif;
 }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --sand: #1E1A17; --sand-2: #27221E; --paper: #2C2622; --ink: #F1EBE2; --ink-soft: #B9AEA2; --line: #3D352F;
-    --sage: #5E6B4E; --sage-deep: #AFC0A2; --rose: #6E4F49; --rose-deep: #E2B3A6; --sky: #4D5D6B; --sky-deep: #B3C6D6;
-    --gold: #CDAA6E; --gold-deep: #E0C08A; --on-gold: #241F1B; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 18px rgba(0,0,0,.25);
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --sand: #1E1A17; --sand-2: #27221E; --paper: #2C2622; --ink: #F1EBE2; --ink-soft: #B9AEA2; --line: #3D352F;
-  --sage: #5E6B4E; --sage-deep: #AFC0A2; --rose: #6E4F49; --rose-deep: #E2B3A6; --sky: #4D5D6B; --sky-deep: #B3C6D6;
-  --gold: #CDAA6E; --gold-deep: #E0C08A; --on-gold: #241F1B; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 18px rgba(0,0,0,.25);
-  color-scheme: dark;
-}
+:root, :root[data-theme="dark"] { color-scheme: light; }
 * { box-sizing: border-box; }
 html, body { height: 100%; background: var(--sand-2); }
 body { margin: 0; color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.55; direction: rtl; }
@@ -127,8 +115,8 @@ textarea { min-height: 96px; resize: vertical; }
 .tile:active { transform: scale(.98); }
 .tile.a { background: var(--sage); }
 .tile.b { background: var(--sky); }
-.timer { height: 4px; background: var(--line); border-radius: 99px; overflow: hidden; }
-.timer i { display: block; height: 100%; width: 100%; background: var(--rose-deep); transform-origin: right; animation: drain 7s linear forwards; }
+.timer { height: 8px; background: #F4EEE5; border-radius: 99px; overflow: hidden; box-shadow: inset 0 0 0 1px #E6DCCD; }
+.timer i { display: block; height: 100%; width: 100%; background: #5C4F43; border-radius: 99px; transform-origin: right; animation: drain var(--t, 8s) linear forwards; }
 @keyframes drain { to { transform: scaleX(0); } }
 .opts { display: grid; gap: 10px; }
 .opt { appearance: none; border: 0; cursor: pointer; text-align: right; background: var(--paper); border-radius: 16px; padding: 15px 16px; font-size: 17px; box-shadow: inset 0 0 0 1.5px var(--line); display: flex; gap: 12px; align-items: center; transition: box-shadow .15s, background .15s; }
@@ -373,7 +361,10 @@ const NAV = [
   ["album", "אלבום", '<rect x="6" y="4" width="12" height="16" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><path d="M9 9h6M9 13h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'],
   ["summary", "הפנקס", '<path d="M6 4h9l3 3v13H6Z" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/><path d="M9 11h6M9 15h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>']
 ];
+let qTimer = null;
+const QUICK_SECONDS = 8;
 function render(html, { nav = false } = {}) {
+  clearTimeout(qTimer);
   app.classList.toggle("has-nav", nav);
   app.innerHTML = `<main class="screen" id="screen">${html}</main>` + (nav ? `<nav class="nav" aria-label="ניווט ראשי">${NAV.map(([id, label, icon]) =>
     `<button type="button" data-nav="${id}" ${current === id ? 'aria-current="page"' : ""}><svg viewBox="0 0 24 24" aria-hidden="true">${icon}</svg>${label}</button>`).join("")}</nav>` : "");
@@ -526,7 +517,7 @@ function question(id) {
   if (it.s === 1) {
     const q = d.s1[it.i];
     body = `<p class="q-title">בלי לחשוב יותר מדי, מה מתאר אותך יותר?</p>
-      <div class="timer" aria-hidden="true"><i></i></div>
+      <div class="timer" aria-hidden="true"><i style="--t:${QUICK_SECONDS}s"></i></div>
       <div class="pair"><button class="tile a" type="button" data-pick="a">${q.a}</button><span class="or">או</span><button class="tile b" type="button" data-pick="b">${q.b}</button></div>`;
   } else {
     const q = d[it.s === 2 ? "s2" : "s3"][it.i];
@@ -536,7 +527,18 @@ function question(id) {
   }
   render(head + body);
   document.getElementById("exit").onclick = () => { toast("ההתקדמות נשמרה"); go("map"); };
+  if (it.s === 1) {
+    const at = run.pos;
+    qTimer = setTimeout(() => {
+      if (current !== "question" || st.run !== run || run.pos !== at) return;
+      const k = id + "s1"; S.asked[k] = [...new Set([...(S.asked[k] || []), it.i])];
+      run.pos++; save();
+      toast("הזמן נגמר, עוברים לשאלה הבאה");
+      go("question", id);
+    }, QUICK_SECONDS * 1000);
+  }
   app.querySelectorAll("[data-pick]").forEach(b => b.onclick = () => {
+    clearTimeout(qTimer);
     b.classList.add("picked");
     answer(id, it, b.dataset.pick, isGold);
     setTimeout(() => go("question", id), 380);
