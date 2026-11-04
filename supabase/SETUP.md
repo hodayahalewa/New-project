@@ -6,11 +6,15 @@
 3. מדביקים את כל התוכן של הקובץ [`schema.sql`](schema.sql) ולוחצים **Run**.
 4. אמורה להופיע ההודעה **Success. No rows returned**.
 
-## 2. כתובת האתר (אחרי ש־Netlify נותן כתובת)
+## 2. כתובת האתר
+
+כתובת האתר הנוכחית: `https://effortless-dieffenbachia-8f7393.netlify.app`
+
 1. **Authentication ← URL Configuration**.
-2. **Site URL:** כתובת האתר, למשל `https://masa-haarachim.netlify.app`
-3. **Redirect URLs ← Add URL:** אותה כתובת, ואחריה `/**`, למשל `https://masa-haarachim.netlify.app/**`
-4. שומרים.
+2. **Site URL:** `https://effortless-dieffenbachia-8f7393.netlify.app`
+3. **Redirect URLs ← Add URL:** `https://effortless-dieffenbachia-8f7393.netlify.app/**`
+4. אם משנים את שם האתר ב־Netlify, צריך לעדכן גם כאן.
+5. שומרים.
 
 בלי השלב הזה, הלינק שמגיע במייל לא יחזיר את המתאמן לאפליקציה.
 
