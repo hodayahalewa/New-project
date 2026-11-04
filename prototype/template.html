@@ -233,6 +233,7 @@ textarea { min-height: 96px; resize: vertical; }
 
 __SUPABASE_SCRIPT__<script>
 const CLOUD = __CLOUD__;
+const VAPID = __VAPID__;
 const DATA = __DATA__;
 const LEAF = "__LEAF__";
 const SPROUT = "__SPROUT__";
@@ -267,6 +268,13 @@ async function pushJourney() {
   S.journeyId ||= uuid();
   const { error } = await sb.from("journeys").upsert({ id: S.journeyId, user_id: user.id, state: S, active: true, updated_at: new Date().toISOString() });
   if (error) console.warn("sync failed", error.message);
+  const v = challengeValue(), r = S.reminders;
+  const { error: pe } = await sb.from("profiles").upsert({
+    id: user.id, name: S.name || null, coach_code: S.coach || null,
+    push_enabled: !!r.push, reminder_day: DAYS.indexOf(r.day), reminder_time: r.time,
+    next_challenge_value: v, next_challenge: v ? V[v].challenge : null, challenges_done: S.challenges
+  });
+  if (pe) console.warn("profile sync failed", pe.message);
 }
 async function pullJourney() {
   const { data, error } = await sb.from("journeys").select("id,state").eq("user_id", user.id).eq("active", true).order("updated_at", { ascending: false }).limit(1);
@@ -725,6 +733,39 @@ function notify(v) {
   n.onclick = () => { n.remove(); go("challenge"); toast("ההתראה פתחה את מסך האתגר"); };
   document.body.appendChild(n); setTimeout(() => n.remove(), 6000);
 }
+/* ---------- push notifications (hosted site only) ---------- */
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+const standalone = () => matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+const pushCapable = () => !!(sb && VAPID && "serviceWorker" in navigator && "PushManager" in window && "Notification" in window);
+let swReg = null;
+if (sb && "serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").then(r => { swReg = r; }).catch(() => {});
+const b64u = s => { const p = "=".repeat((4 - s.length % 4) % 4), b = atob((s + p).replace(/-/g, "+").replace(/_/g, "/")); return Uint8Array.from(b, c => c.charCodeAt(0)); };
+async function currentSub() { try { const reg = swReg || await navigator.serviceWorker.getRegistration(); return reg ? await reg.pushManager.getSubscription() : null; } catch (e) { return null; } }
+function iosHelp() {
+  sheet(`<h2>התראות באייפון</h2><p>באייפון התראות עובדות רק מאפליקציה שנוספה למסך הבית. זה לוקח חצי דקה:</p>
+    <ol class="how"><li>פותחים את האתר ב־<b>Safari</b>.</li><li>לוחצים על כפתור השיתוף (ריבוע עם חץ למעלה).</li><li>בוחרים <b>הוספה למסך הבית</b> ולוחצים <b>הוספה</b>.</li><li>פותחים את מסע הערכים מהאייקון החדש, נכנסים למסך האתגר ומפעילים התראות.</li></ol>
+    <p class="small muted">צריך iOS בגרסה 16.4 ומעלה.</p>`);
+}
+async function enablePush() {
+  if (!user) { toast("כדי לקבל התראות צריך להתחבר עם מייל"); go("account"); return false; }
+  if (isIOS && !standalone()) { iosHelp(); return false; }
+  if (!pushCapable()) { toast("הדפדפן הזה לא תומך בהתראות. אפשר להשתמש בתזכורת ביומן"); return false; }
+  const perm = await Notification.requestPermission();
+  if (perm !== "granted") { toast("ההתראות לא אושרו. אפשר לאשר אותן בהגדרות הדפדפן של האתר"); return false; }
+  try {
+    const reg = swReg || await navigator.serviceWorker.ready;
+    const sub = (await reg.pushManager.getSubscription()) || await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64u(VAPID) });
+    const j = sub.toJSON();
+    const { error } = await sb.from("push_subscriptions").upsert({ endpoint: j.endpoint, user_id: user.id, p256dh: j.keys.p256dh, auth: j.keys.auth });
+    if (error) throw error;
+    return true;
+  } catch (e) { console.warn(e); toast("לא הצלחנו להפעיל התראות. כדאי לנסות שוב"); return false; }
+}
+async function disablePush() {
+  const sub = await currentSub();
+  if (sub) { await sb.from("push_subscriptions").delete().eq("endpoint", sub.endpoint); await sub.unsubscribe().catch(() => {}); }
+}
+
 function challenge() {
   const v = challengeValue();
   if (!v) {
@@ -753,8 +794,8 @@ function challenge() {
         <div class="field"><label for="tm">שעה</label><input id="tm" type="time" value="${r.time}"></div></div>
       <div class="tension"><b>התזכורת הבאה</b><span id="nextr">${nextReminder(r)}</span></div>
       <div class="tension"><b>האתגר של השבוע הבא</b><span>${V[nv].icon} ${nv}: ${V[nv].challenge}</span></div>
-      <div class="toggle"><span>התראה בטלפון</span><button class="switch" type="button" role="switch" id="push" aria-checked="${r.push}" aria-label="התראה בטלפון"></button></div>
-      <div class="toggle"><span>גם במייל${S.account?.type === "email" ? "" : ' <span class="small muted">(אחרי כניסה עם מייל)</span>'}</span><button class="switch" type="button" role="switch" id="mailsw" aria-checked="${r.mail}" aria-label="תזכורת גם במייל"></button></div>
+      <div class="toggle"><span>התראה בטלפון${sb ? '<br><span class="small muted" id="pushState">בודקים...</span>' : ""}</span><button class="switch" type="button" role="switch" id="push" aria-checked="${r.push}" aria-label="התראה בטלפון"></button></div>
+      <div class="toggle"><span>גם במייל <span class="sketch-tag">בקרוב</span></span><button class="switch" type="button" role="switch" id="mailsw" aria-checked="${r.mail}" aria-label="תזכורת גם במייל"></button></div>
       <p class="small muted">כך תיראה ההתראה בטלפון:</p>
       <div class="notif static" aria-hidden="true">${notifHTML(v)}</div>
       <button class="btn ghost" type="button" id="test">לקבל התראה לדוגמה עכשיו</button>
@@ -765,11 +806,30 @@ function challenge() {
     toast(`כל הכבוד! הערך "${v}" צמח בגן`); setTimeout(() => go("garden"), 700);
   };
   const sw = (id, key) => { const b = document.getElementById(id); b.onclick = () => { r[key] = !r[key]; b.setAttribute("aria-checked", r[key]); save(); }; };
-  sw("push", "push"); sw("mailsw", "mail");
+  sw("mailsw", "mail");
+  const pb = document.getElementById("push"), ps = document.getElementById("pushState");
+  const showPush = (on, txt) => { pb.setAttribute("aria-checked", on); if (ps) ps.textContent = txt; };
+  if (sb) {
+    currentSub().then(sub => showPush(!!(sub && r.push), sub && r.push ? "פעילות במכשיר הזה" : user ? "כבויות במכשיר הזה" : "צריך להתחבר עם מייל"));
+    pb.onclick = async () => {
+      if (pb.getAttribute("aria-checked") === "true") { await disablePush(); r.push = false; save(); showPush(false, "כבויות במכשיר הזה"); return; }
+      showPush(false, "מפעילים...");
+      const ok = await enablePush();
+      r.push = ok; save(); showPush(ok, ok ? "פעילות במכשיר הזה" : "כבויות במכשיר הזה");
+      if (ok) toast("ההתראות הופעלו");
+    };
+  } else sw("push", "push");
   const upd = () => { document.getElementById("nextr").textContent = nextReminder(r); };
   document.getElementById("day").onchange = e => { r.day = e.target.value; save(); upd(); };
   document.getElementById("tm").onchange = e => { r.time = e.target.value; save(); upd(); };
-  document.getElementById("test").onclick = () => notify(v);
+  document.getElementById("test").onclick = async () => {
+    const sub = sb ? await currentSub() : null;
+    if (!sub || !user) { notify(v); if (sb) toast("זו תצוגה בתוך האפליקציה. כדי לקבל התראה אמיתית, מפעילים קודם התראות בטלפון"); return; }
+    await pushJourney();
+    const { data, error } = await sb.functions.invoke("send-reminders", { body: { test: true } });
+    if (error) return toast("שליחת התראת הבדיקה לא הצליחה. כנראה שהשירות עוד לא הוגדר בענן");
+    toast(data && data.sent ? "נשלחה התראה לטלפון" : "לא נמצא מכשיר רשום להתראות");
+  };
   document.getElementById("cal").onclick = () => toast(`בגרסה המלאה ייווצר אירוע קבוע ביומן: כל יום ${r.day} בשעה ${r.time}`);
 }
 
@@ -893,7 +953,9 @@ async function boot() {
       if (!u) user = null;
     });
   }
-  go(S.started ? "map" : "welcome");
+  const want = new URLSearchParams(location.search).get("go");
+  if (want) history.replaceState(null, "", location.pathname);
+  go(S.started ? (want === "challenge" ? "challenge" : "map") : "welcome");
 }
 boot();
 </script>
